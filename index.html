@@ -207,9 +207,10 @@
         .bank-tab.active { background: var(--black-royal); color: var(--yellow-haseen); border-color: var(--black-royal); box-shadow: var(--shadow); }
         .btn-add-wallet { background: var(--success-soft); color: var(--success); border-color: var(--success-soft); }
 
-        .wallets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+        /* تم تعديل عرض الكروت هنا لضمان ظهور جميع المحافظ الـ 24 بسلاسة تامة على الجوال والشاشات الكبيرة */
+        .wallets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
         .w-card { 
-            background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; 
+            background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 20px; 
             position: relative; overflow: hidden; box-shadow: var(--shadow); transition: 0.3s;
         }
         .w-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
@@ -220,17 +221,17 @@
 
         .wallet-coverage {
             background: var(--bg-main); border: 1px solid var(--border); border-radius: 10px;
-            padding: 8px 12px; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px; font-weight: 700;
+            padding: 8px 12px; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px; font-weight: 700;
         }
 
-        .tx-form { margin-top: 18px; padding-top: 15px; border-top: 1px dashed var(--border); }
+        .tx-form { margin-top: 15px; padding-top: 12px; border-top: 1px dashed var(--border); }
         .tx-form input { 
-            width: 100%; padding: 12px; margin-bottom: 10px; background: var(--bg-main); color: var(--black-royal);
-            border: 1px solid var(--border); border-radius: 10px; outline: none; font-weight: 600;
+            width: 100%; padding: 10px; margin-bottom: 8px; background: var(--bg-main); color: var(--black-royal);
+            border: 1px solid var(--border); border-radius: 10px; outline: none; font-weight: 600; font-size: 0.85rem;
         }
         .tx-form input:focus { border-color: var(--gold-matte); background: var(--surface); }
-        .tx-btns { display: flex; gap: 10px; }
-        .tx-btns button { flex: 1; padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; border: none; }
+        .tx-btns { display: flex; gap: 8px; }
+        .tx-btns button { flex: 1; padding: 10px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; border: none; font-size: 0.85rem; }
         .btn-in { background: var(--black-royal); color: var(--yellow-haseen); }
         .btn-in:hover { background: var(--gold-matte); color: #FFF; }
         .btn-out { background: var(--bg-main); border: 1px solid var(--border) !important; color: var(--black-royal); }
@@ -458,7 +459,7 @@
     <!-- لوحة الرؤية -->
     <div class="box-panel" style="margin-top:20px;">
         <h3 style="font-weight:900; font-size:1.15rem;">✨ لوحة الأهداف والرؤية (Vision Board)</h3>
-        <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">اربطي صور أهدافك بالمحافظ وتابعي نسبة الإنجاز البصري.</p>
+        <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">اربطي صور أهدافك بالمحافظ وتابعي نسبة الإنجاز البصري (مع إمكانية التعديل).</p>
         <div class="vision-grid" id="visionGrid"></div>
     </div>
 
@@ -484,6 +485,19 @@
         <div class="modal-btns">
             <button onclick="changePin()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ التغيير</button>
             <button onclick="closeModal('settingsModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="visionModal">
+    <div class="modal-content">
+        <h3 id="visionModalTitle">ربط هدف جديد بالرؤية 🖼️</h3>
+        <input type="hidden" id="editVisionId">
+        <input type="file" id="visionImageInput" accept="image/*" style="padding:10px; background:var(--bg-main);">
+        <select id="visionWalletSelect"></select>
+        <div class="modal-btns">
+            <button onclick="saveVisionGoal()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ الهدف</button>
+            <button onclick="closeModal('visionModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
         </div>
     </div>
 </div>
@@ -595,18 +609,6 @@
     </div>
 </div>
 
-<div class="modal" id="visionModal">
-    <div class="modal-content">
-        <h3>ربط هدف جديد بالرؤية 🖼️</h3>
-        <input type="file" id="visionImageInput" accept="image/*" style="padding:10px; background:var(--bg-main);">
-        <select id="visionWalletSelect"></select>
-        <div class="modal-btns">
-            <button onclick="saveVisionGoal()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ الصورة</button>
-            <button onclick="closeModal('visionModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
-        </div>
-    </div>
-</div>
-
 <div class="modal" id="addWishModal">
     <div class="modal-content">
         <h3>إضافة غرض لقائمة الأمنيات 🛍️</h3>
@@ -645,23 +647,23 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    // القائمة الكاملة والمرتبطة لجميع محافظك الـ 24 الموزعة على الجهات الأربعة
+    // القائمة الكاملة والمرتبة لجميع محافظك الـ 24 بدقة
     const defaultWallets = [
         // أولاً: مصرف الراجحي
         { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة (10%)", coverage: "تُقتطع فوراً وتُصرف في أوجه الخير طوال العام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
-        { id: "r2", bank: "rajhi", name: "محفظة إفطار صائم (صدقات رمضان)", coverage: "مبلغ إضافي ومستقل (يستهدف 5,000 ريال) لدعم أهلك في رمضان", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "r3", bank: "rajhi", name: "محفظة الأعياد المقدسة 🔒", coverage: "خط أحمر مقدس؛ لا يُصرف منها ريال واحد خارج أيام العيد الرسمية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "r4", bank: "rajhi", name: "حساب رأس مال البزنس (Business Capital)", coverage: "لتمويل مشاريعك الخاصة (العود والسبح، بضائع، تغليف وإعلانات)", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "r5", bank: "rajhi", name: "محفظة صيانة وتحديث الأجهزة", coverage: "مخصصة لصيانة وترقية اللابتوب والجوال لأجل عملك الحر", cap: 2000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "r6", bank: "rajhi", name: "محفظة الإجازات والرحلات العائلية", coverage: "للمساهمة في السفرات، الشاليهات والطلعات الجماعية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r2", bank: "rajhi", name: "محفظة إفطار صائم (صدقات رمضان)", coverage: "مبلغ إضافي ومستقل لدعم أهلك في رمضان", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r3", bank: "rajhi", name: "محفظة الأعياد المقدسة 🔒", coverage: "خط أحمر مقدس؛ لا يُصرف منها إلا أيام العيد الرسمية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r4", bank: "rajhi", name: "حساب رأس مال البزنس (Business Capital)", coverage: "لتمويل مشاريعك الخاصة (العود والسبح وبضائع المتجر)", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r5", bank: "rajhi", name: "محفظة صيانة وتحديث الأجهزة", coverage: "مخصصة لصيانة وترقية اللابتوب والجوال للعمل الحر", cap: 2000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r6", bank: "rajhi", name: "محفظة الإجازات والرحلات العائلية", coverage: "للمساهمة في السفرات والشاليهات والطلعات الجماعية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
 
         // ثانياً: مصرف الإنماء
-        { id: "i1", bank: "inma", name: "صندوق الطوارئ الشخصي", coverage: "يُربط بعوائد شرعية (3 إلى 6 أشهر)، للأزمات الكبرى فقط", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i1", bank: "inma", name: "صندوق الطوارئ الشخصي", coverage: "يُربط بعوائد شرعية (3 إلى 6 أشهر) للأزمات الكبرى فقط", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
         { id: "i2", bank: "inma", name: "محفظة الأسنان والطوارئ الصحية", coverage: "معالجة الأسنان فوراً دون انتظار المواعيد الحكومية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "i3", bank: "inma", name: "محفظة الذهب والاستثمار التراكمي", coverage: "لتجميع (2,500 - 3,000 ريال) وشراء سبيكة ذهب عيار 24", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i3", bank: "inma", name: "محفظة الذهب والاستثمار التراكمي", coverage: "لتجميع وشراء سبيكة ذهب صافي عيار 24", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
         { id: "i4", bank: "inma", name: "محفظة تجميع السيارة", coverage: "ادخار طويل المدى لأكثر من سنة لتجميع قيمة السيارة", cap: 30000, balance: 0, createdDate: new Date().toISOString() },
         { id: "i5", bank: "inma", name: "محفظة السكن وتجهيز الأثاث", coverage: "لتطوير السكن الحالي وشراء القطع الأساسية الكبيرة", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "i6", bank: "inma", name: "محفظة مساعدة الأسرة (طوارئ الأهل)", coverage: "رصيد أمان مخصص لدعم الأهل في أي ظرف مالي طارئ", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i6", bank: "inma", name: "محفظة مساعدة الأسرة (طوارئ الأهل)", coverage: "رصيد أمان مخصص لدعم الأهل في أي ظرف طارئ", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
 
         // ثالثاً: تطبيق D360
         { id: "d1", bank: "d360", name: "التسوق الشخصي والكشخة اليومية", coverage: "ميزانية شهرية للملابس والعبايات ومشتريات الخرجات", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
@@ -1424,19 +1426,25 @@
         if(confirm("هل تريدين حذف هذا الغرض من القائمة؟")) { wishlist = wishlist.filter(w => w.id !== id); saveData(); showAlert("تم الحذف من القائمة"); }
     }
 
+    // دوال لوحة الرؤية المحدثة (تدعم التعديل والربط بأي محفظة من الـ 24)
     function renderVisionBoard() {
         const grid = document.getElementById('visionGrid'); grid.innerHTML = '';
         visionGoals.forEach(goal => {
-            const w = wallets.find(x => x.id === goal.walletId); if(!w) return;
-            let pct = Math.min(100, Math.floor((w.balance / w.cap) * 100));
+            const w = wallets.find(x => x.id === goal.walletId); 
+            const walletName = w ? w.name : 'محفظة غير مرتبطة';
+            let pct = (w && w.cap > 0) ? Math.min(100, Math.floor((w.balance / w.cap) * 100)) : 100;
             let isDone = pct >= 100;
+            
             grid.innerHTML += `
                 <div class="vision-item">
-                    <button onclick="deleteVisionGoal(${goal.id})" title="حذف الهدف" style="position:absolute; top:18px; left:18px; background:rgba(255,255,255,0.9); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; color:var(--danger); font-weight:bold;">✖</button>
+                    <div style="position:absolute; top:12px; left:12px; display:flex; gap:6px; z-index:10;">
+                        <button onclick="openEditVisionModal(${goal.id})" title="تعديل الهدف" style="background:rgba(255,255,255,0.9); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; font-weight:bold; display:flex; align-items:center; justify-content:center;">✏️</button>
+                        <button onclick="deleteVisionGoal(${goal.id})" title="حذف الهدف" style="background:rgba(255,255,255,0.9); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; color:var(--danger); font-weight:bold; display:flex; align-items:center; justify-content:center;">✖</button>
+                    </div>
                     <img src="${goal.img}">
                     <div class="v-info">
-                        <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">${w.name}</div>
-                        ${isDone ? '<span class="completed-badge">100% ✔️ مكتملة</span>' : `<span style="font-weight:900; color:var(--gold-matte); font-size:1.1rem;">${pct}%</span>`}
+                        <div style="font-weight:800; font-size:0.85rem; margin-bottom:4px; color:var(--black-royal);">${walletName}</div>
+                        ${w && w.cap > 0 ? (isDone ? '<span class="completed-badge">100% ✔️ مكتملة</span>' : `<span style="font-weight:900; color:var(--gold-matte); font-size:1.1rem;">${pct}%</span>`) : '<span style="font-size:0.75rem; color:var(--text-secondary);">رصيد مفتوح</span>'}
                     </div>
                 </div>`;
         });
@@ -1448,23 +1456,64 @@
     }
 
     function openVisionModalBox() {
+        document.getElementById('visionModalTitle').innerText = "ربط هدف جديد بالرؤية 🖼️";
+        document.getElementById('editVisionId').value = '';
+        document.getElementById('visionImageInput').value = '';
+        
         const sel = document.getElementById('visionWalletSelect');
-        sel.innerHTML = '<option value="">اختاري المحفظة المرتبطة...</option>';
-        wallets.filter(w => w.cap > 0).forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name}</option>`; });
+        sel.innerHTML = '<option value="">اختاري أي محفظة من الـ 24...</option>';
+        // عرض جميع المحافظ الـ 24 دون استثناء
+        wallets.forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name} (${w.balance} ر.س)</option>`; });
+        openModal('visionModal');
+    }
+
+    function openEditVisionModal(id) {
+        const goal = visionGoals.find(g => g.id === id);
+        if(!goal) return;
+        document.getElementById('visionModalTitle').innerText = "تعديل الهدف ✏️";
+        document.getElementById('editVisionId').value = goal.id;
+        
+        const sel = document.getElementById('visionWalletSelect');
+        sel.innerHTML = '<option value="">اختاري أي محفظة من الـ 24...</option>';
+        wallets.forEach(w => { 
+            sel.innerHTML += `<option value="${w.id}" ${w.id === goal.walletId ? 'selected' : ''}>${w.name} (${w.balance} ر.س)</option>`; 
+        });
         openModal('visionModal');
     }
 
     function saveVisionGoal() {
+        const editId = document.getElementById('editVisionId').value;
         const file = document.getElementById('visionImageInput').files[0];
         const wId = document.getElementById('visionWalletSelect').value;
-        if (!file || !wId) { showAlert("الرجاء اختيار الصورة والمحفظة!", "error"); return; }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            visionGoals.push({ id: Date.now(), img: e.target.result, walletId: wId });
-            saveData(); closeModal('visionModal'); showAlert("تمت إضافة الهدف بنجاح!");
-            document.getElementById('visionImageInput').value = '';
-        };
-        reader.readAsDataURL(file);
+
+        if (!wId) { showAlert("الرجاء اختيار المحفظة المرتبطة!", "error"); return; }
+
+        if (editId) {
+            // تعديل هدف موجود
+            const goal = visionGoals.find(g => g.id == editId);
+            if(goal) {
+                goal.walletId = wId;
+                if(file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        goal.img = e.target.result;
+                        saveData(); closeModal('visionModal'); showAlert("تم تعديل الهدف بنجاح!");
+                    };
+                    reader.readAsDataURL(file);
+                    return;
+                }
+                saveData(); closeModal('visionModal'); showAlert("تم تعديل الهدف بنجاح!");
+            }
+        } else {
+            // إضافة هدف جديد
+            if (!file) { showAlert("الرجاء اختيار الصورة!", "error"); return; }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                visionGoals.push({ id: Date.now(), img: e.target.result, walletId: wId });
+                saveData(); closeModal('visionModal'); showAlert("تمت إضافة الهدف بنجاح!");
+            };
+            reader.readAsDataURL(file);
+        }
     }
 
     if(localStorage.getItem('haseen_logged_in') === 'true') {
