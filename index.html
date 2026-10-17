@@ -635,7 +635,6 @@
 </div>
 
 <script>
-    // فرض ضبط الرمز السري ليصبح 1234 دائماً
     localStorage.setItem('haseen_pin', '1234');
 
     const quotes = [
@@ -646,7 +645,7 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    // المحافظ الأساسية الافتراضية الثابتة
+    // المحافظ الأساسية الكاملة لجميع البنوك (الراجحي، الإنماء، D360، برق)
     const defaultWallets = [
         { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
         { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
