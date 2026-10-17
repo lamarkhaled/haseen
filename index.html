@@ -65,19 +65,28 @@
         }
         .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
+        /* تعديل الهيدر للجوال والشاشات الكبيرة ليصبح مرتباً وغير مزعج */
         .navbar {
-            background: var(--surface); padding: 16px 32px; border-bottom: 2px solid var(--yellow-haseen);
+            background: var(--surface); padding: 12px 20px; border-bottom: 2px solid var(--yellow-haseen);
             display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+            gap: 10px; flex-wrap: wrap;
         }
-        .brand-area { display: flex; align-items: center; gap: 14px; }
-        .brand-area img { width: 45px; }
-        .nav-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .brand-area { display: flex; align-items: center; gap: 10px; }
+        .brand-area img { width: 38px; }
+        .nav-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .btn-nav {
-            background: var(--bg-main); border: 1px solid var(--border); padding: 8px 16px;
-            border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.85rem;
+            background: var(--bg-main); border: 1px solid var(--border); padding: 6px 12px;
+            border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.8rem;
         }
         .btn-nav:hover { background: var(--yellow-soft); border-color: var(--gold-matte); }
         .btn-logout { background: var(--danger-soft); color: var(--danger); border-color: var(--danger-soft); }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 10px 15px; justify-content: center; }
+            .brand-area { width: 100%; justify-content: center; margin-bottom: 5px; }
+            .nav-actions { width: 100%; justify-content: center; gap: 6px; }
+            .btn-nav { padding: 5px 10px; font-size: 0.75rem; }
+        }
 
         .main-wrapper { max-width: 1400px; margin: 35px auto; padding: 0 20px 60px; }
         .box-panel {
@@ -231,9 +240,9 @@
         <h2 style="font-weight:900; font-size:1.2rem;">حصين المالية</h2>
     </div>
     <div class="nav-actions">
-        <span style="font-weight:800; color:var(--gold-matte); margin-left:15px; font-size:0.95rem;" id="welcomeText"></span>
-        <button class="btn-nav" onclick="window.print()">🖨️ طباعة التقرير / PDF</button>
-        <button class="btn-nav" onclick="exportBackup()">📥 تصدير البيانات</button>
+        <span style="font-weight:800; color:var(--gold-matte); margin-left:10px; font-size:0.9rem;" id="welcomeText"></span>
+        <button class="btn-nav" onclick="window.print()">🖨️ طباعة</button>
+        <button class="btn-nav" onclick="exportBackup()">📥 تصدير</button>
         <button class="btn-nav" onclick="document.getElementById('importFile').click()">📤 استرجاع</button>
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
         <button class="btn-nav" onclick="openModal('settingsModal')">إعدادات الرمز ⚙️</button>
@@ -596,7 +605,6 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    // استرجاع البيانات بأمان تام (إذا لم توجد بيانات سابقة فقط نضع القيم الافتراضية، ولن يتم مسح أي بيانات موجودة أبداً)
     let wallets = JSON.parse(localStorage.getItem('haseen_wallets'));
     if(!wallets || wallets.length === 0) {
         wallets = [
@@ -639,12 +647,13 @@
     }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
+    // تم التعديل لاستخدام localStorage بدلاً من sessionStorage ليحفظ الدخول في الجوال بشكل دائم وثابت
     function handleLogin(e) {
         e.preventDefault();
         const pin = document.getElementById('passwordInput').value;
         const savedPin = localStorage.getItem('haseen_pin') || '1234';
         if (pin === savedPin) {
-            sessionStorage.setItem('haseen_logged_in', 'true');
+            localStorage.setItem('haseen_logged_in', 'true');
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
             showAlert("أهلاً بكِ في حصين، لمار!");
@@ -654,7 +663,7 @@
     }
     
     function logout() {
-        sessionStorage.removeItem('haseen_logged_in');
+        localStorage.removeItem('haseen_logged_in');
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('passwordInput').value = '';
     }
@@ -1395,7 +1404,8 @@
         reader.readAsDataURL(file);
     }
 
-    if(sessionStorage.getItem('haseen_logged_in') === 'true') {
+    // التحقق من localStorage بدلاً من sessionStorage لحالة تسجيل الدخول
+    if(localStorage.getItem('haseen_logged_in') === 'true') {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
         initApp(); checkHawlAlerts();
