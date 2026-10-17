@@ -28,6 +28,12 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
         body { background-color: var(--bg-main); color: var(--black-royal); min-height: 100vh; overflow-x: hidden; }
 
+        @media print {
+            .navbar, .bank-nav, .btn-nav, .action-btns, .tx-form, #loginScreen, .wise-box, .timeline-container, .modal { display: none !important; }
+            .main-wrapper { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .box-panel { box-shadow: none !important; border: 1px solid #ccc !important; break-inside: avoid; }
+        }
+
         .custom-alert {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
             background: var(--black-royal); color: var(--yellow-haseen); padding: 16px 24px;
@@ -87,7 +93,7 @@
         .k-label { font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); }
         .gold-kpi .k-label { color: var(--gold-matte); }
         .streak-kpi .k-label { color: var(--success); }
-        .k-val { font-size: 1.6rem; font-weight: 900; margin-top: 8px; }
+        .k-val { font-size: 1.5rem; font-weight: 900; margin-top: 8px; }
         .gold-kpi .k-val { color: var(--yellow-haseen); }
         .streak-kpi .k-val { color: var(--success); }
 
@@ -99,7 +105,6 @@
         .timeline-step.active { border-color: var(--gold-matte); background: var(--yellow-soft); }
         .timeline-step span { display: block; font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
 
-        /* To-Do List Styles */
         .todo-list { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
         .todo-item {
             display: flex; align-items: center; justify-content: space-between;
@@ -110,14 +115,13 @@
         .todo-item.done .todo-text { text-decoration: line-through; color: var(--text-secondary); }
         .todo-checkbox { width: 22px; height: 22px; cursor: pointer; accent-color: var(--black-royal); }
 
-        /* Subs Grid */
         .subs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; margin-top: 15px; }
         .sub-card { background: var(--bg-main); border: 1px solid var(--border); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
 
         .log-table { width: 100%; border-collapse: collapse; text-align: right; margin-top: 15px; }
         .log-table th { background: var(--bg-main); padding: 12px; font-size: 0.85rem; color: var(--text-secondary); border-radius: 8px; }
         .log-table td { padding: 14px 12px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; }
-        .scroller { max-height: 260px; overflow-y: auto; padding-left: 5px; }
+        .scroller { max-height: 280px; overflow-y: auto; padding-left: 5px; }
 
         .split-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px;}
         .sp-card { background: var(--bg-main); padding: 18px; border-radius: 14px; border: 1px solid var(--border); text-align: center; }
@@ -191,6 +195,8 @@
         }
         .icon-btn:hover { background: var(--border); }
 
+        .search-filter { padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-main); font-weight: 600; font-size: 0.85rem; outline: none; }
+
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
         .modal.show { display: flex; }
         .modal-content { background: var(--surface); padding: 32px; border-radius: 22px; width: 100%; max-width: 420px; border: 1px solid var(--gold-matte); box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
@@ -226,6 +232,7 @@
     </div>
     <div class="nav-actions">
         <span style="font-weight:800; color:var(--gold-matte); margin-left:15px; font-size:0.95rem;" id="welcomeText"></span>
+        <button class="btn-nav" onclick="window.print()">🖨️ طباعة التقرير / PDF</button>
         <button class="btn-nav" onclick="exportBackup()">📥 تصدير البيانات</button>
         <button class="btn-nav" onclick="document.getElementById('importFile').click()">📤 استرجاع</button>
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
@@ -252,40 +259,40 @@
         <div class="timeline-track" id="timelineContainer"></div>
     </div>
 
-    <!-- المؤشرات العلوية KPI -->
+    <!-- المؤشرات العلوية KPI + 3. حاسبة الأمان المالي -->
     <div class="kpi-grid">
         <div class="kpi-card gold-kpi"><span class="k-label">إجمالي السيولة والثروة</span><div class="k-val" id="kpi-grand">0 ر.س</div></div>
         <div class="kpi-card streak-kpi"><span class="k-label">🔥 أيام بدون صرف</span><div class="k-val" id="kpi-streak">0 يوم</div></div>
+        <div class="kpi-card"><span class="k-label">🛡️ حاسبة الأمان المالي (Runway)</span><div class="k-val" id="kpi-runway" style="font-size:1.1rem; margin-top:10px;">0 أشهر</div></div>
         <div class="kpi-card"><span class="k-label">💼 أعلى قناة إدراراً للدخل</span><div class="k-val" id="kpi-topChannel" style="font-size:1.1rem; margin-top:10px;">متجر سلة</div></div>
-        <div class="kpi-card"><span class="k-label">🔒 مصرف الإنماء</span><div class="k-val" id="kpi-inma">0 ر.س</div></div>
         <div class="kpi-card"><span class="k-label">🩺 مؤشر الصحة والتحول</span><div class="k-val" id="kpi-health" style="font-size:1.1rem; margin-top:10px;">ممتاز 🌟</div></div>
     </div>
 
-    <!-- ================= 2. متتبع اشتراكات أدوات العمل والبرامج ================= -->
+    <!-- متتبع اشتراكات أدوات العمل والبرامج -->
     <div class="box-panel">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div>
                 <h3 style="font-weight:900; font-size:1.2rem;">🛠️ متتبع اشتراكات البرامج والعمل (SaaS Subscriptions)</h3>
-                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">إدارة وتتبع تجديد اشتراكات سلة، أدوات التصميم، والهوستنج وتاريخ الخصم.</p>
+                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">إدارة وتعديل اشتراكات سلة، أدوات التصميم، والهوستنج وتاريخ الخصم.</p>
             </div>
             <button class="btn-nav" onclick="openModal('addSubModal')" style="background:var(--black-royal); color:var(--yellow-haseen); border:none;">+ إضافة اشتراك جديد</button>
         </div>
         <div class="subs-grid" id="subsContainer"></div>
     </div>
 
-    <!-- ================= 5. تقرير ومقارنة أداء المواسم والقنوات ================= -->
+    <!-- تقرير ومقارنة أداء المواسم والقنوات -->
     <div class="box-panel" style="background: linear-gradient(135deg, #FFF, var(--bg-main)); border-color:var(--gold-matte);">
         <h3 style="font-weight:900; font-size:1.2rem; margin-bottom:5px;">📊 تقرير ومقارنة أداء قنوات الدخل والمواسم</h3>
         <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:15px;">تحليل بصري يحدد لكِ مصدر أرباحك الأكثر إنتاجية للتركيز والتوسع فيه.</p>
         <div id="channelAnalyticsContainer" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px;"></div>
     </div>
 
-    <!-- سكشن مصاريف والتزامات الشهر (To-Do List) -->
+    <!-- سكشن مصاريف والتزامات الشهر (To-Do List) مع إمكانية التعديل -->
     <div class="box-panel">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
             <div>
                 <h3 style="font-weight:900; font-size:1.2rem;">📋 مصاريف والتزامات الشهر (To-Do List)</h3>
-                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">أضيفي التزاماتك وربطيها بالمحفظة، وعند الضغط على الصح يتم الخصم التلقائي فوراً!</p>
+                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">أضيفي أو عدلي التزاماتك، وعند الضغط على الصح يتم الخصم التلقائي فوراً!</p>
             </div>
             <button class="btn-nav" onclick="openModal('addExpenseModal')">+ إضافة التزام جديد</button>
         </div>
@@ -315,12 +322,12 @@
         </div>
     </div>
 
-    <!-- سجل أفكار المشاريع والمنتجات الرقمية -->
+    <!-- سجل أفكار المشاريع والمنتجات الرقمية مع إمكانية التعديل -->
     <div class="box-panel">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
             <div>
                 <h3 style="font-weight:900; font-size:1.15rem;">🌱 سجل أفكار المشاريع والمنتجات الرقمية</h3>
-                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:2px;">دوني الأفكار والخدمات التي تنوين تحويلها لمصادر دخل مستقبلاً.</p>
+                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:2px;">دوني وعدلي الأفكار والخدمات التي تنوين تحويلها لمصادر دخل مستقبلاً.</p>
             </div>
             <button class="btn-nav" onclick="addIncomeIdea()">+ إضافة فكرة جديدة</button>
         </div>
@@ -328,23 +335,26 @@
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
-        <!-- سجل التحركات -->
+        <!-- سجل التحركات مع التعديل والفلترة -->
         <div class="box-panel" style="margin-bottom:0;">
-            <h3 style="font-weight:900; font-size:1.15rem;">🔄 متتبع التحركات الأخيرة</h3>
-            <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">سجل تفصيلي لكافة عمليات الإيداع والصرف في المحافظ.</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <h3 style="font-weight:900; font-size:1.15rem;">🔄 متتبع التحركات الأخيرة</h3>
+                <input type="text" id="txFilter" class="search-filter" placeholder="🔍 فلترة التحركات..." oninput="renderTransactions()">
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">سجل تفصيلي قابل للتعديل لكافة عمليات الإيداع والصرف.</p>
             <div class="scroller">
                 <table class="log-table">
-                    <thead><tr><th>التاريخ</th><th>المحفظة</th><th>النوع</th><th>المبلغ</th><th>التفاصيل</th></tr></thead>
+                    <thead><tr><th>التاريخ</th><th>المحفظة</th><th>النوع</th><th>المبلغ</th><th>التفاصيل</th><th>تعديل</th></tr></thead>
                     <tbody id="transactionsBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- ================= 4. متتبع الدخل + حافز إعادة استثمار الأرباح ================= -->
+        <!-- متتبع الدخل مع التصفية والفلترة -->
         <div class="box-panel" style="margin-bottom:0;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="font-weight:900; font-size:1.15rem;">📈 تنظيم وتتبع الدخل (الربح الصافي + الاستثمار)</h3>
-                <span id="incomeGoalStatus" style="font-size:0.8rem; font-weight:bold; color:var(--gold-matte);">هدف الشهر: 5,000 ر.س</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <h3 style="font-weight:900; font-size:1.15rem;">📈 تنظيم وتتبع الدخل</h3>
+                <input type="text" id="incFilter" class="search-filter" placeholder="🔍 فلترة الدخل..." oninput="renderIncomes()">
             </div>
             <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">سجلي أرباحك مع إمكانية اقتطاع نسبة مئوية تلقائياً لتطوير أعمالك 🌱</p>
             
@@ -393,7 +403,7 @@
                 <h3 style="font-weight:900; font-size:1.15rem;">🛍️ قائمة أمنياتي (Wishlist Vault)</h3>
                 <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">الأغراض المستهدفة مع حساب الخطة الزمنية وسحب/تعديل المبالغ.</p>
             </div>
-            <button class="btn-nav" onclick="openModal('addWishModal')" style="background:var(--success-soft); color:var(--success); border-color:var(--success-soft);">+ إضافة غرض للقائمة</button>
+            <button class="btn-nav" onclick="openModal('addWishModal')" style="background:var(--success-soft); color:var(--success); border-color:var(--success-soft);">+ إضافة غرض لقائمة الأمنيات</button>
         </div>
         <div class="wishlist-grid" id="wishlistGrid"></div>
     </div>
@@ -418,7 +428,7 @@
 
 </div>
 
-<!-- Modals -->
+<!-- Modals للتعديل والتحكم الكامل -->
 <div class="modal" id="settingsModal">
     <div class="modal-content">
         <h3>تغيير الرمز السري 🔒</h3>
@@ -427,6 +437,52 @@
         <div class="modal-btns">
             <button onclick="changePin()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ التغيير</button>
             <button onclick="closeModal('settingsModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="editExpenseModal">
+    <div class="modal-content">
+        <h3>تعديل الالتزام الشهري ✏️</h3>
+        <input type="hidden" id="editExpId">
+        <input type="text" id="editExpName" placeholder="اسم الالتزام">
+        <input type="number" id="editExpAmount" placeholder="المبلغ (ر.س)">
+        <select id="editExpWalletSelect"></select>
+        <div class="modal-btns">
+            <button onclick="saveEditedExpense()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ التعديل</button>
+            <button onclick="closeModal('editExpenseModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="editSubModal">
+    <div class="modal-content">
+        <h3>تعديل الاشتراك 🛠️</h3>
+        <input type="hidden" id="editSubId">
+        <input type="text" id="editSubName" placeholder="اسم الاشتراك">
+        <input type="number" id="editSubPrice" placeholder="التكلفة (ر.س)">
+        <select id="editSubCycle">
+            <option value="شهري">تجديد شهري</option>
+            <option value="سنوي">تجديد سنوي</option>
+        </select>
+        <input type="date" id="editSubDueDate">
+        <select id="editSubWalletSelect"></select>
+        <div class="modal-btns">
+            <button onclick="saveEditedSubscription()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ التعديل</button>
+            <button onclick="closeModal('editSubModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="editTxModal">
+    <div class="modal-content">
+        <h3>تعديل عملية في السجل 🔄</h3>
+        <input type="hidden" id="editTxIdx">
+        <input type="text" id="editTxNote" placeholder="التفاصيل والسبب">
+        <input type="number" id="editTxAmount" placeholder="المبلغ (ر.س)">
+        <div class="modal-btns">
+            <button onclick="saveEditedTransaction()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ التعديل</button>
+            <button onclick="closeModal('editTxModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
         </div>
     </div>
 </div>
@@ -574,9 +630,10 @@
     }
 
     function openModal(id) {
-        if(id === 'addExpenseModal' || id === 'addSubModal') {
-            const sel = document.getElementById(id === 'addExpenseModal' ? 'expWalletSelect' : 'subWalletSelect');
-            sel.innerHTML = '<option value="">اختاري المحفظة الخصمية...</option>';
+        if(id === 'addExpenseModal' || id === 'addSubModal' || id === 'editExpenseModal' || id === 'editSubModal') {
+            const selId = id.includes('Expense') ? (id.includes('edit') ? 'editExpWalletSelect' : 'expWalletSelect') : (id.includes('edit') ? 'editSubWalletSelect' : 'subWalletSelect');
+            const sel = document.getElementById(selId);
+            sel.innerHTML = '<option value="">اختاري المحفظة المرتبطة...</option>';
             wallets.forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name} (${w.balance} ر.س)</option>`; });
         }
         document.getElementById(id).classList.add('show');
@@ -618,7 +675,7 @@
         renderSplitter(); renderDashboard(); renderTransactions(); renderIncomes();
         renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); renderVisionBoard();
         renderWishlist(); renderWallets(currentBank); calcStreak(); renderTimelineBadges();
-        renderIdeas(); updateSprintUI(); calcTopChannel();
+        renderIdeas(); updateSprintUI(); calcTopChannel(); calcRunway();
     }
 
     function saveData() {
@@ -632,7 +689,7 @@
         localStorage.setItem('haseen_tx_log', JSON.stringify(transactionsLog));
         localStorage.setItem('haseen_last_out', lastOutDate);
         localStorage.setItem('haseen_sprint_goal', sprintGoal);
-        renderDashboard(); renderVisionBoard(); renderWishlist(); renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); calcStreak(); renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel();
+        renderDashboard(); renderVisionBoard(); renderWishlist(); renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); calcStreak(); renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel(); calcRunway();
     }
 
     function renderDashboard() {
@@ -644,7 +701,6 @@
             sums.grand += w.balance;
         });
         document.getElementById('kpi-grand').innerText = sums.grand.toLocaleString('ar-SA') + ' ر.س';
-        document.getElementById('kpi-inma').innerText = sums.inma.toLocaleString('ar-SA') + ' ر.س';
 
         const emergencyWallet = wallets.find(w => w.id === 'i1');
         let healthText = "ممتاز 🌟";
@@ -658,7 +714,22 @@
         document.getElementById('incomeGoalStatus').innerText = `محقق: ${totalIncomeThisMonth.toLocaleString('ar-SA')} من 5,000 ر.س`;
     }
 
-    /* --- Subscriptions Functions (Feature 2) --- */
+    /* 3. حاسبة الأمان المالي Runway Calculator */
+    function calcRunway() {
+        const totalEmergency = (wallets.find(w => w.id === 'i1') || { balance: 0 }).balance;
+        const monthlySubs = subscriptions.reduce((acc, s) => acc + (s.cycle === 'شهري' ? s.price : s.price/12), 0);
+        const monthlyExp = expenses.reduce((acc, e) => acc + e.amount, 0);
+        const totalBurn = monthlySubs + monthlyExp;
+
+        if(totalBurn <= 0) {
+            document.getElementById('kpi-runway').innerText = "تغطية كاملة 🛡️";
+            return;
+        }
+        const months = (totalEmergency / totalBurn).toFixed(1);
+        document.getElementById('kpi-runway').innerText = `${months} أشهر أمان`;
+    }
+
+    /* --- Subscriptions Edit & Management --- */
     function addSubscription() {
         const name = document.getElementById('subName').value;
         const price = parseFloat(document.getElementById('subPrice').value);
@@ -672,6 +743,33 @@
         saveData(); closeModal('addSubModal');
         document.getElementById('subName').value = ''; document.getElementById('subPrice').value = '';
         showAlert("تمت إضافة الاشتراك بنجاح!");
+    }
+
+    function openEditSubModal(id) {
+        const sub = subscriptions.find(s => s.id === id);
+        if(!sub) return;
+        document.getElementById('editSubId').value = sub.id;
+        document.getElementById('editSubName').value = sub.name;
+        document.getElementById('editSubPrice').value = sub.price;
+        document.getElementById('editSubCycle').value = sub.cycle;
+        document.getElementById('editSubDueDate').value = sub.dueDate;
+        openModal('editSubModal');
+        document.getElementById('editSubWalletSelect').value = sub.walletId;
+    }
+
+    function saveEditedSubscription() {
+        const id = parseInt(document.getElementById('editSubId').value);
+        const sub = subscriptions.find(s => s.id === id);
+        if(!sub) return;
+
+        sub.name = document.getElementById('editSubName').value;
+        sub.price = parseFloat(document.getElementById('editSubPrice').value) || 0;
+        sub.cycle = document.getElementById('editSubCycle').value;
+        sub.dueDate = document.getElementById('editSubDueDate').value;
+        sub.walletId = document.getElementById('editSubWalletSelect').value;
+
+        saveData(); closeModal('editSubModal');
+        showAlert("تم تعديل الاشتراك بنجاح!");
     }
 
     function paySubscription(id) {
@@ -713,6 +811,7 @@
                     </div>
                     <div style="display:flex; gap:8px; margin-top:12px;">
                         <button onclick="paySubscription(${sub.id})" style="flex:1; background:var(--black-royal); color:var(--yellow-haseen); padding:8px; border-radius:8px; font-weight:bold; border:none; cursor:pointer;">💳 دفع وسداد</button>
+                        <button onclick="openEditSubModal(${sub.id})" style="background:var(--bg-main); border:1px solid var(--border); padding:8px; border-radius:8px; font-weight:bold; cursor:pointer;">✏️</button>
                         <button onclick="deleteSubscription(${sub.id})" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold;">🗑️</button>
                     </div>
                 </div>
@@ -721,7 +820,7 @@
         if(subscriptions.length === 0) c.innerHTML = `<p style="color:var(--text-secondary); font-size:0.85rem;">لا توجد اشتراكات مضافة.</p>`;
     }
 
-    /* --- Seasonal & Channel Analytics (Feature 5) --- */
+    /* Seasonal & Channel Analytics */
     function renderChannelAnalytics() {
         const c = document.getElementById('channelAnalyticsContainer');
         c.innerHTML = '';
@@ -750,7 +849,7 @@
         });
     }
 
-    /* --- Income with Re-investment Allocator (Feature 4) --- */
+    /* Income with Re-investment Allocator */
     function addIncomeNet() {
         const gross = parseFloat(document.getElementById('inc-gross').value) || 0;
         const cost = parseFloat(document.getElementById('inc-cost').value) || 0;
@@ -782,6 +881,7 @@
         }
     }
 
+    /* Monthly Expense Edit */
     function addMonthlyExpense() {
         const name = document.getElementById('expName').value;
         const amt = parseFloat(document.getElementById('expAmount').value);
@@ -793,6 +893,29 @@
         saveData(); closeModal('addExpenseModal');
         document.getElementById('expName').value = ''; document.getElementById('expAmount').value = '';
         showAlert("تمت إضافة الالتزام لقائمة المصاريف!");
+    }
+
+    function openEditExpenseModal(id) {
+        const exp = expenses.find(e => e.id === id);
+        if(!exp) return;
+        document.getElementById('editExpId').value = exp.id;
+        document.getElementById('editExpName').value = exp.name;
+        document.getElementById('editExpAmount').value = exp.amount;
+        openModal('editExpenseModal');
+        document.getElementById('editExpWalletSelect').value = exp.walletId;
+    }
+
+    function saveEditedExpense() {
+        const id = parseInt(document.getElementById('editExpId').value);
+        const exp = expenses.find(e => e.id === id);
+        if(!exp) return;
+
+        exp.name = document.getElementById('editExpName').value;
+        exp.amount = parseFloat(document.getElementById('editExpAmount').value) || 0;
+        exp.walletId = document.getElementById('editExpWalletSelect').value;
+
+        saveData(); closeModal('editExpenseModal');
+        showAlert("تم تعديل الالتزام بنجاح!");
     }
 
     function toggleExpense(id) {
@@ -839,8 +962,9 @@
                             <span style="display:block; font-size:0.75rem; color:var(--text-secondary); margin-top:2px;">خصم من: ${w ? w.name : 'محفظة محذوفة'}</span>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-size:1rem; font-weight:900; color:var(--black-royal);">${exp.amount.toLocaleString('ar-SA')} ر.س</span>
+                        <button onclick="openEditExpenseModal(${exp.id})" style="border:none; background:none; cursor:pointer;">✏️</button>
                         <button onclick="deleteExpense(${exp.id})" style="border:none; background:none; color:var(--danger); cursor:pointer; font-weight:bold;">🗑️</button>
                     </div>
                 </div>
@@ -848,6 +972,78 @@
         });
 
         if(expenses.length === 0) c.innerHTML = `<p style="color:var(--text-secondary); font-size:0.88rem;">لا توجد التزامات شهرية مضافة.</p>`;
+    }
+
+    /* Transactions Log Edit */
+    function openEditTxModal(idx) {
+        const tx = transactionsLog[idx];
+        if(!tx) return;
+        document.getElementById('editTxIdx').value = idx;
+        document.getElementById('editTxNote').value = tx.note;
+        document.getElementById('editTxAmount').value = tx.amount;
+        openModal('editTxModal');
+    }
+
+    function saveEditedTransaction() {
+        const idx = parseInt(document.getElementById('editTxIdx').value);
+        const tx = transactionsLog[idx];
+        if(!tx) return;
+
+        tx.note = document.getElementById('editTxNote').value;
+        tx.amount = parseFloat(document.getElementById('editTxAmount').value) || 0;
+
+        saveData(); closeModal('editTxModal'); renderTransactions();
+        showAlert("تم تعديل العملية في السجل بنجاح!");
+    }
+
+    function renderTransactions() {
+        const tbody = document.getElementById('transactionsBody');
+        const filter = (document.getElementById('txFilter')?.value || '').toLowerCase();
+        tbody.innerHTML = '';
+        
+        transactionsLog.forEach((tx, idx) => {
+            if(filter && !tx.walletName.toLowerCase().includes(filter) && !tx.note.toLowerCase().includes(filter)) return;
+            let color = tx.type === 'in' ? 'var(--success)' : 'var(--danger)';
+            let sign = tx.type === 'in' ? '+' : '-';
+            tbody.innerHTML += `
+                <tr>
+                    <td>${tx.date}</td>
+                    <td>${tx.walletName}</td>
+                    <td style="color:${color}; font-weight:800;">${tx.type==='in'?'إيداع':'صرف'}</td>
+                    <td style="color:${color}; font-weight:800;">${sign}${tx.amount.toLocaleString('ar-SA')} ر.س</td>
+                    <td>${tx.note}</td>
+                    <td><button onclick="openEditTxModal(${idx})" style="border:none; background:none; cursor:pointer;">✏️</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    function renderIncomes() {
+        const tbody = document.getElementById('incomeBody');
+        const filter = (document.getElementById('incFilter')?.value || '').toLowerCase();
+        tbody.innerHTML = '';
+        incomes.forEach(inc => {
+            if(filter && !inc.channel.toLowerCase().includes(filter) && !(inc.reason || '').toLowerCase().includes(filter)) return;
+            tbody.innerHTML += `<tr><td>${inc.date}</td><td style="color:var(--success); font-weight:800;">+${inc.amount.toLocaleString('ar-SA')} ر.س</td><td>${inc.channel}</td><td>${inc.reason || '-'}</td></tr>`;
+        });
+    }
+
+    /* Ideas Vault Edit */
+    function addIncomeIdea() {
+        const idea = prompt("اكتبي فكرة أو خدمة جديدة لزيادة الدخل:");
+        if(idea) { ideas.push(idea); saveData(); }
+    }
+
+    function editIdea(idx) {
+        const newText = prompt("تعديل نص الفكرة:", ideas[idx]);
+        if(newText) { ideas[idx] = newText; saveData(); }
+    }
+
+    function renderIdeas() {
+        const c = document.getElementById('ideasContainer'); c.innerHTML = '';
+        ideas.forEach((id, idx) => {
+            c.innerHTML += `<div style="background:var(--bg-main); border:1px solid var(--border); padding:8px 14px; border-radius:20px; font-size:0.82rem; font-weight:bold; display:flex; align-items:center; gap:8px;">🌱 ${id} <span onclick="editIdea(${idx})" style="cursor:pointer; color:var(--text-secondary);">✏️</span><span onclick="ideas.splice(${idx},1);saveData();" style="cursor:pointer; color:var(--danger);">✖</span></div>`;
+        });
     }
 
     function calcStreak() {
@@ -890,18 +1086,6 @@
             saveData(); document.getElementById('wishShedAmount').value = '';
             showAlert(`شطورة يا لمار! وفرتِ ${amt} ر.س وأضفتها للمحفظة 👏✨`);
         }
-    }
-
-    function addIncomeIdea() {
-        const idea = prompt("اكتبي فكرة أو خدمة جديدة لزيادة الدخل:");
-        if(idea) { ideas.push(idea); saveData(); }
-    }
-
-    function renderIdeas() {
-        const c = document.getElementById('ideasContainer'); c.innerHTML = '';
-        ideas.forEach((id, idx) => {
-            c.innerHTML += `<div style="background:var(--bg-main); border:1px solid var(--border); padding:8px 14px; border-radius:20px; font-size:0.82rem; font-weight:bold; display:flex; align-items:center; gap:8px;">🌱 ${id} <span onclick="ideas.splice(${idx},1);saveData();" style="cursor:pointer; color:var(--danger);">✖</span></div>`;
-        });
     }
 
     function checkHawlAlerts() {
@@ -960,20 +1144,6 @@
             let pct = parseFloat(document.getElementById(`pct-${i}`).value) || 0;
             document.getElementById(`sp-${i}`).innerText = ((total * pct) / 100).toLocaleString('ar-SA') + ' ر.س';
         }
-    }
-
-    function renderIncomes() {
-        const tbody = document.getElementById('incomeBody'); tbody.innerHTML = '';
-        incomes.forEach(inc => { tbody.innerHTML += `<tr><td>${inc.date}</td><td style="color:var(--success); font-weight:800;">+${inc.amount.toLocaleString('ar-SA')} ر.س</td><td>${inc.channel}</td><td>${inc.reason || '-'}</td></tr>`; });
-    }
-
-    function renderTransactions() {
-        const tbody = document.getElementById('transactionsBody'); tbody.innerHTML = '';
-        transactionsLog.slice(0, 15).forEach(tx => {
-            let color = tx.type === 'in' ? 'var(--success)' : 'var(--danger)';
-            let sign = tx.type === 'in' ? '+' : '-';
-            tbody.innerHTML += `<tr><td>${tx.date}</td><td>${tx.walletName}</td><td style="color:${color}; font-weight:800;">${tx.type==='in'?'إيداع':'صرف'}</td><td style="color:${color}; font-weight:800;">${sign}${tx.amount.toLocaleString('ar-SA')} ر.س</td><td>${tx.note}</td></tr>`;
-        });
     }
 
     function switchBank(bankCode, btn) {
