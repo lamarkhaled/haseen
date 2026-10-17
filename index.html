@@ -79,25 +79,27 @@
             margin-bottom: 30px; border: 1px solid var(--border); box-shadow: var(--shadow);
         }
 
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; margin-bottom: 30px; }
-        .kpi-card { background: var(--surface); padding: 22px; border-radius: 18px; border: 1px solid var(--border); border-right: 5px solid var(--black-royal); box-shadow: var(--shadow); transition: 0.3s; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 25px; }
+        .kpi-card { background: var(--surface); padding: 20px; border-radius: 18px; border: 1px solid var(--border); border-right: 5px solid var(--black-royal); box-shadow: var(--shadow); transition: 0.3s; }
         .kpi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
         .kpi-card.gold-kpi { background: var(--black-royal); color: #FFF; border-right-color: var(--gold-matte); }
         .kpi-card.streak-kpi { background: var(--success-soft); border-right-color: var(--success); }
-        .k-label { font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); }
+        .k-label { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); }
         .gold-kpi .k-label { color: var(--gold-matte); }
         .streak-kpi .k-label { color: var(--success); }
-        .k-val { font-size: 1.6rem; font-weight: 900; margin-top: 8px; }
+        .k-val { font-size: 1.5rem; font-weight: 900; margin-top: 6px; }
         .gold-kpi .k-val { color: var(--yellow-haseen); }
         .streak-kpi .k-val { color: var(--success); }
 
-        /* الأوسمة والمؤشرات الإضافية */
-        .badges-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
-        .badge-chip {
-            background: var(--surface); border: 1px solid var(--gold-matte); padding: 8px 14px;
-            border-radius: 20px; font-size: 0.82rem; font-weight: 800; display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow);
-        }
-        .badge-chip.locked { opacity: 0.4; border-color: var(--border); filter: grayscale(1); }
+        /* تيم لاين الأوسمة */
+        .timeline-container { background: var(--surface); border-radius: 20px; padding: 24px; margin-bottom: 30px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .timeline-track { display: flex; justify-content: space-between; position: relative; margin-top: 20px; gap: 10px; flex-wrap: wrap; }
+        .timeline-step { flex: 1; min-width: 130px; background: var(--bg-main); padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); text-align: center; position: relative; }
+        .timeline-step.active { border-color: var(--gold-matte); background: var(--yellow-soft); }
+        .timeline-step span { display: block; font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
+
+        /* حكيم حصين */
+        .wise-box { background: linear-gradient(135deg, var(--black-royal), #222); color: #fff; padding: 18px 24px; border-radius: 16px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid var(--gold-matte); }
 
         .log-table { width: 100%; border-collapse: collapse; text-align: right; margin-top: 15px; }
         .log-table th { background: var(--bg-main); padding: 12px; font-size: 0.85rem; color: var(--text-secondary); border-radius: 8px; }
@@ -108,7 +110,6 @@
         .sp-card { background: var(--bg-main); padding: 18px; border-radius: 14px; border: 1px solid var(--border); text-align: center; }
         .sp-card input { width: 65px; padding: 6px; border: 1px solid var(--border); border-radius: 8px; text-align: center; font-weight: 800; color: var(--gold-matte); background: var(--surface); outline: none;}
         
-        /* قائمة الأمنيات (Wishlist) */
         .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-top: 20px; }
         .wish-card {
             background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 16px; box-shadow: var(--shadow);
@@ -221,6 +222,9 @@
     </div>
     <div class="nav-actions">
         <span style="font-weight:800; color:var(--gold-matte); margin-left:15px; font-size:0.95rem;" id="welcomeText"></span>
+        <button class="btn-nav" onclick="exportBackup()">📥 تصدير</button>
+        <button class="btn-nav" onclick="document.getElementById('importFile').click()">📤 استرجاع</button>
+        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
         <button class="btn-nav" onclick="openModal('settingsModal')">إعدادات الرمز ⚙️</button>
         <button class="btn-nav btn-logout" onclick="logout()">قفل الشاشة 🔒</button>
     </div>
@@ -229,9 +233,19 @@
 <!-- ================= المحتوى الرئيسي ================= -->
 <div class="main-wrapper">
 
-    <!-- شريط الأوسمة التفاعلية -->
-    <div class="badges-row" id="badgesContainer">
-        <!-- سيتم توليد الأوسمة هنا -->
+    <!-- حكيم حصين (حكمة اليوم) -->
+    <div class="wise-box">
+        <div>
+            <span style="font-size:0.75rem; color:var(--gold-matte); font-weight:bold; display:block; margin-bottom:4px;">💡 حكيم حصين (إضاءة اليوم)</span>
+            <p id="dailyQuote" style="font-size:0.95rem; font-weight:700;"></p>
+        </div>
+    </div>
+
+    <!-- خط وقت الأوسمة التفاعلي (Timeline Badges) -->
+    <div class="timeline-container">
+        <h3 style="font-weight:900; font-size:1.15rem; margin-bottom:5px;">🏆 رحلة أوسمة الثروة والإنجاز</h3>
+        <p style="color:var(--text-secondary); font-size:0.85rem;">تابعي تقدمك نحو الوسام التالي وكيف تتحركين في خط الزمن المالي.</p>
+        <div class="timeline-track" id="timelineContainer"></div>
     </div>
 
     <!-- المؤشرات العلوية -->
@@ -240,7 +254,19 @@
         <div class="kpi-card streak-kpi"><span class="k-label">🔥 أيام بدون صرف</span><div class="k-val" id="kpi-streak">0 يوم</div></div>
         <div class="kpi-card"><span class="k-label">💼 مصرف الراجحي</span><div class="k-val" id="kpi-rajhi">0 ر.س</div></div>
         <div class="kpi-card"><span class="k-label">🔒 مصرف الإنماء</span><div class="k-val" id="kpi-inma">0 ر.س</div></div>
-        <div class="kpi-card"><span class="k-label">🩺 مؤشر الصحة والتحول</span><div class="k-val" id="kpi-health" style="font-size:1.2rem; margin-top:12px;">ممتاز 🌟</div></div>
+        <div class="kpi-card"><span class="k-label">🩺 مؤشر الصحة والتحول</span><div class="k-val" id="kpi-health" style="font-size:1.1rem; margin-top:10px;">ممتاز 🌟</div></div>
+    </div>
+
+    <!-- زر عداد توفير الرغبة السريع -->
+    <div class="box-panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; background:var(--yellow-soft); border-color:var(--gold-matte);">
+        <div>
+            <h4 style="font-weight:900; color:var(--black-royal);">💡 عداد توفير الرغبة (ضبط النفس)</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">هل تراجعتِ عن شراء شيء غير ضروري اليوم؟ سجلي سعره هنا لتري كم وفرتِ!</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <input type="number" id="wishShedAmount" placeholder="المبلغ الموفر (ر.س)" style="padding:10px; border:1px solid var(--border); border-radius:10px; width:150px; background:#fff; font-weight:bold;">
+            <button onclick="recordWishShedding()" style="background:var(--black-royal); color:var(--yellow-haseen); padding:10px 16px; border-radius:10px; font-weight:bold; border:none; cursor:pointer;">تراجعت ووفرت! 🎉</button>
+        </div>
     </div>
 
     <!-- الحاسبة -->
@@ -268,11 +294,17 @@
             </div>
         </div>
 
-        <!-- متتبع الدخل مع التصنيفات -->
+        <!-- متتبع الدخل مع التصنيفات والهدف -->
         <div class="box-panel" style="margin-bottom:0;">
-            <h3 style="font-weight:900; font-size:1.15rem;">📈 متتبع الدخل المستقل</h3>
-            <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">سجلي أرباحك وتصنيفاتها بمرونة تامة.</p>
-            <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="font-weight:900; font-size:1.15rem;">📈 تنظيم وتتبع الدخل</h3>
+                <span id="incomeGoalStatus" style="font-size:0.8rem; font-weight:bold; color:var(--gold-matte);">هدف الشهر: 5,000 ر.س</span>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">سجلي أرباحك وتصنيفاتها وقنواتك التجارية بمرونة.</p>
+            
+            <div class="prog-bar" style="margin: 10px 0;"><div class="prog-fill" id="incomeGoalBar" style="width:0%"></div></div>
+
+            <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
                 <input type="number" id="inc-amount" placeholder="المبلغ (ر.س)" style="flex:1; min-width:110px; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--bg-main); font-weight:600;">
                 <select id="inc-channel" style="flex:1; min-width:130px; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--bg-main); font-weight:600;">
                     <option value="متجر إلكتروني / سلة">متجر إلكتروني / سلة</option>
@@ -294,7 +326,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div>
                 <h3 style="font-weight:900; font-size:1.15rem;">🛍️ قائمة أمنياتي (Wishlist Vault)</h3>
-                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">الأغراض التي تودين شراءها مع تتبع مبالغها ومتاجرها.</p>
+                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">الأغراض مع إمكانية تعديل كم جمعتي منها وسحبها بكل حرية.</p>
             </div>
             <button class="btn-nav" onclick="openModal('addWishModal')" style="background:var(--success-soft); color:var(--success); border-color:var(--success-soft);">+ إضافة غرض للقائمة</button>
         </div>
@@ -389,12 +421,33 @@
     </div>
 </div>
 
+<!-- تعديل تفاصيل الغرض في الـ Wishlist -->
+<div class="modal" id="editWishModal">
+    <div class="modal-content">
+        <h3>تعديل الرصيد المجمع للأرض 💳</h3>
+        <input type="hidden" id="editWishId">
+        <input type="number" id="editWishSaved" placeholder="المبلغ المتوفر حالياً لهذا الغرض (ر.س)">
+        <div class="modal-btns">
+            <button onclick="saveWishSavedAmount()" style="background:var(--black-royal); color:var(--yellow-haseen);">تحديث المبلغ</button>
+            <button onclick="closeModal('editWishModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    const quotes = [
+        "المال عبد مطيع، لكنه سيد سيء جداً.",
+        "لا تدخر ما يتبقى بعد الإنفاق، بل أنفق ما يتبقى بعد الادخار.",
+        "الاستثمار في المعرفة يدفع أعلى فائدة.",
+        "التحكم في رغباتك اليومية هو أساس بناء ثروة الغد."
+    ];
+    document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+
     const defaultWallets = [
-        { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", cap: 0, balance: 0 },
-        { id: "i1", bank: "inma", name: "صندوق الطوارئ", cap: 15000, balance: 0 },
-        { id: "d1", bank: "d360", name: "الكشخة اليومية", cap: 1000, balance: 0 },
-        { id: "b2", bank: "barq", name: "الاشتراكات الثابتة", cap: 750, balance: 0 }
+        { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", cap: 0, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i1", bank: "inma", name: "صندوق الطوارئ", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d1", bank: "d360", name: "الكشخة اليومية", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "b2", bank: "barq", name: "الاشتراكات الثابتة", cap: 750, balance: 0, createdDate: new Date().toISOString() }
     ];
 
     let wallets = JSON.parse(localStorage.getItem('haseen_wallets')) || defaultWallets;
@@ -427,6 +480,7 @@
             document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
             showAlert("أهلاً بكِ في حصين، لمار!");
             initApp();
+            checkHawlAlerts();
         } else { showAlert("الرمز السري غير صحيح!", "error"); }
     }
     
@@ -450,7 +504,7 @@
 
     function initApp() {
         renderSplitter(); renderDashboard(); renderTransactions(); renderIncomes();
-        renderVisionBoard(); renderWishlist(); renderWallets(currentBank); calcStreak(); renderBadges();
+        renderVisionBoard(); renderWishlist(); renderWallets(currentBank); calcStreak(); renderTimelineBadges();
     }
 
     function saveData() {
@@ -460,7 +514,7 @@
         localStorage.setItem('haseen_wishlist', JSON.stringify(wishlist));
         localStorage.setItem('haseen_tx_log', JSON.stringify(transactionsLog));
         localStorage.setItem('haseen_last_out', lastOutDate);
-        renderDashboard(); renderVisionBoard(); renderWishlist(); calcStreak(); renderBadges();
+        renderDashboard(); renderVisionBoard(); renderWishlist(); calcStreak(); renderTimelineBadges();
     }
 
     function renderDashboard() {
@@ -475,12 +529,17 @@
         document.getElementById('kpi-rajhi').innerText = sums.rajhi.toLocaleString('ar-SA') + ' ر.س';
         document.getElementById('kpi-inma').innerText = sums.inma.toLocaleString('ar-SA') + ' ر.س';
 
-        // مؤشر الصحة المالية
         const emergencyWallet = wallets.find(w => w.id === 'i1');
         let healthText = "ممتاز 🌟";
         if (!emergencyWallet || emergencyWallet.balance < 5000) healthText = "يحتاج انتباه ⚠️";
         else if (sums.grand > 20000) healthText = "آمن ومستقر 💎";
         document.getElementById('kpi-health').innerText = healthText;
+
+        // حساب هدف الدخل (المستهدف 5000 ريال)
+        const totalIncomeThisMonth = incomes.reduce((acc, inc) => acc + inc.amount, 0);
+        const goalPct = Math.min(100, Math.floor((totalIncomeThisMonth / 5000) * 100));
+        document.getElementById('incomeGoalBar').style.width = goalPct + '%';
+        document.getElementById('incomeGoalStatus').innerText = `محقق: ${totalIncomeThisMonth.toLocaleString('ar-SA')} من 5,000 ر.س`;
     }
 
     function calcStreak() {
@@ -490,25 +549,57 @@
         return diffDays;
     }
 
-    function renderBadges() {
+    function recordWishShedding() {
+        const amt = parseFloat(document.getElementById('wishShedAmount').value);
+        if(!amt || amt <= 0) { showAlert("أدخلي مبلغاً صحيحاً تم توفيره!", "error"); return; }
+        // إضافته لمحفظة الرغبات أو أول محفظة
+        let targetW = wallets.find(w => w.name.includes('الرغبات')) || wallets[0];
+        if(targetW) {
+            targetW.balance += amt;
+            transactionsLog.unshift({ date: new Date().toLocaleDateString('ar-SA'), walletName: targetW.name + ' (توفير رغبة 💡)', type: 'in', amount: amt, note: 'ضبط النفس وتجنب شراء غير ضروري' });
+            saveData();
+            document.getElementById('wishShedAmount').value = '';
+            showAlert(`يا عيني عليكِ يا لمار! وفرتِ ${amt} ر.س وأضفتها للمحفظة 👏✨`);
+        }
+    }
+
+    function checkHawlAlerts() {
+        const now = new Date();
+        wallets.forEach(w => {
+            if (w.balance >= 3000 && w.createdDate) {
+                const created = new Date(w.createdDate);
+                const diffDays = Math.floor((now - created) / (1000 * 60 * 60 * 24));
+                if (diffDays >= 365) {
+                    setTimeout(() => {
+                        showAlert(`⏳ تنبيه الحول: محفظة (${w.name}) أكملت سنة ورصيدها ${w.balance} ر.س. تذكري زكاتها!`, "warning");
+                    }, 2000);
+                }
+            }
+        });
+    }
+
+    // تيم لاين الأوسمة
+    function renderTimelineBadges() {
         const streak = calcStreak();
         const totalSaved = wallets.reduce((acc, w) => acc + w.balance, 0);
         const hasEmergency = wallets.some(w => w.id === 'i1' && w.balance >= 5000);
 
-        const badges = [
-            { name: "صقر الطوارئ 🦅", unlocked: hasEmergency },
-            { name: "سيد الادخار 🔥", unlocked: streak >= 7 },
-            { name: "صانع الثروة 💎", unlocked: totalSaved >= 10000 },
-            { name: "اليد البيضاء ✨", unlocked: wallets.some(w => w.bank === 'rajhi' && w.balance > 0) }
+        const steps = [
+            { title: "بداية الطريق 🌱", desc: "سجلي أول دخل ومحفظة", unlocked: true },
+            { title: "صقر الطوارئ 🦅", desc: "تغطية الطوارئ 5000+", unlocked: hasEmergency },
+            { title: "سيد الادخار 🔥", desc: "7 أيام بدون صرف", unlocked: streak >= 7 },
+            { title: "صانع الثروة 💎", desc: "إجمالي ادخار 10,000+", unlocked: totalSaved >= 10000 },
+            { title: "الخبير المالي 👑", desc: "اكتمال كافة الأهداف", unlocked: false }
         ];
 
-        const container = document.getElementById('badgesContainer');
+        const container = document.getElementById('timelineContainer');
         container.innerHTML = '';
-        badges.forEach(b => {
+        steps.forEach((st, idx) => {
             container.innerHTML += `
-                <div class="badge-chip ${b.unlocked ? '' : 'locked'}">
-                    <span>${b.unlocked ? '🏆' : '🔒'}</span>
-                    <span>${b.name}</span>
+                <div class="timeline-step ${st.unlocked ? 'active' : ''}">
+                    <strong style="font-size:0.85rem; display:block; color:var(--black-royal);">${st.title}</strong>
+                    <span>${st.unlocked ? '✔ مُحقق' : 'قيد التقدم ⏳'}</span>
+                    <span style="margin-top:2px; font-size:0.7rem;">${st.desc}</span>
                 </div>
             `;
         });
@@ -569,7 +660,7 @@
         const n = document.getElementById('newWalletName').value;
         const c = parseFloat(document.getElementById('newWalletCap').value) || 0;
         if(!n) { showAlert("الرجاء إدخال اسم المحفظة!", "error"); return; }
-        wallets.push({ id: 'w'+Date.now(), bank: b, name: n, cap: c, balance: 0 });
+        wallets.push({ id: 'w'+Date.now(), bank: b, name: n, cap: c, balance: 0, createdDate: new Date().toISOString() });
         saveData(); closeModal('addWalletModal');
         document.getElementById('newWalletName').value = ''; document.getElementById('newWalletCap').value = '';
         showAlert("تم إضافة المحفظة بنجاح!");
@@ -657,7 +748,11 @@
         const oldPct = w.cap > 0 ? Math.floor((w.balance / w.cap) * 100) : 0;
         
         if(type === 'in') w.balance += amt;
-        else { w.balance -= amt; lastOutDate = new Date().toLocaleDateString('en-CA'); }
+        else {
+            w.balance -= amt;
+            lastOutDate = new Date().toLocaleDateString('en-CA');
+            showAlert("أنتبهي يا لمار، سحبتِ مبلغ! راقبي أهدافك زين ⚠️", "warning");
+        }
 
         transactionsLog.unshift({ date: new Date().toLocaleDateString('ar-SA'), walletName: w.name, type: type, amount: amt, note: note });
         const newPct = w.cap > 0 ? Math.floor((w.balance / w.cap) * 100) : 0;
@@ -666,8 +761,10 @@
 
         if(type === 'in' && newPct >= 100 && oldPct < 100) {
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#111111', '#FDE047'] });
-            showAlert(`مبروك! أتممتِ هدف محفظة (${w.name}) 🎯`);
-        } else { showAlert(type === 'in' ? "تم الإيداع بنجاح" : "تم الخصم بنجاح"); }
+            showAlert(`شطورة يا لمار! أتممتِ هدف محفظة (${w.name}) 100% 🎯✨`);
+        } else if(type === 'in') {
+            showAlert("تم الإيداع بنجاح، خطوة ممتازة!");
+        }
         
         document.getElementById(`note-${id}`).value = '';
         document.getElementById(`amt-${id}`).value = '';
@@ -689,6 +786,7 @@
                 id: Date.now(),
                 name: name,
                 price: price,
+                saved: 0,
                 store: store || 'متجر',
                 url: url || '#',
                 img: e.target.result || 'https://via.placeholder.com/150'
@@ -703,31 +801,56 @@
         };
         if(file) reader.readAsDataURL(file);
         else {
-            wishlist.push({ id: Date.now(), name: name, price: price, store: store || 'متجر', url: url || '#', img: 'https://via.placeholder.com/150' });
+            wishlist.push({ id: Date.now(), name: name, price: price, saved: 0, store: store || 'متجر', url: url || '#', img: 'https://via.placeholder.com/150' });
             saveData(); closeModal('addWishModal');
             showAlert("تمت إضافة الغرض بنجاح!");
+        }
+    }
+
+    function openEditWishModal(id) {
+        const item = wishlist.find(w => w.id === id);
+        if(!item) return;
+        document.getElementById('editWishId').value = item.id;
+        document.getElementById('editWishSaved').value = item.saved || 0;
+        openModal('editWishModal');
+    }
+
+    function saveWishSavedAmount() {
+        const id = parseInt(document.getElementById('editWishId').value);
+        const val = parseFloat(document.getElementById('editWishSaved').value) || 0;
+        const item = wishlist.find(w => w.id === id);
+        if(item) {
+            item.saved = val;
+            saveData();
+            closeModal('editWishModal');
+            if(item.saved >= item.price) {
+                confetti({ particleCount: 100, spread: 60, origin: { y: 0.6 } });
+                showAlert(`شطورة يا لمار! جمعتِ قيمة (${item.name}) وصار جاهز للشراء! 🛒✨`);
+            } else {
+                showAlert("تم تحديث رصيد الغرض بنجاح!");
+            }
         }
     }
 
     function renderWishlist() {
         const grid = document.getElementById('wishlistGrid');
         grid.innerHTML = '';
-        const totalSaved = wallets.reduce((acc, w) => acc + w.balance, 0); // كمقياس عام للسيولة أو أرباح
 
         wishlist.forEach(item => {
-            let pct = Math.min(100, Math.floor((totalSaved / item.price) * 100));
-            let isReady = totalSaved >= item.price;
+            let pct = Math.min(100, Math.floor((item.saved / item.price) * 100));
+            let isReady = item.saved >= item.price;
             grid.innerHTML = `
                 <div class="wish-card">
                     <div>
                         <img src="${item.img}" alt="${item.name}">
                         <h5>${item.name}</h5>
-                        <div class="price">${item.price.toLocaleString('ar-SA')} ر.س • ${item.store}</div>
-                        <div style="font-size:0.75rem; color:var(--text-secondary);">السيولة المتاحة لتغطيته: ${pct}%</div>
+                        <div class="price">${item.saved} من ${item.price.toLocaleString('ar-SA')} ر.س • ${item.store}</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">نسبة تجميعك له: ${pct}%</div>
                         <div class="prog-bar"><div class="prog-fill ${isReady?'done':''}" style="width:${pct}%"></div></div>
                     </div>
                     <div class="wish-actions">
-                        ${isReady ? `<a href="${item.url}" target="_blank" class="btn-buy-ready">جاهز للشراء! 🛒</a>` : `<span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);">قيد التجميع...</span>`}
+                        <button onclick="openEditWishModal(${item.id})" class="btn-nav" style="padding:4px 8px; font-size:0.75rem;">تعديل المبلغ ✏️</button>
+                        ${isReady ? `<a href="${item.url}" target="_blank" class="btn-buy-ready">جاهز للشراء! 🛒</a>` : `<span style="font-size:0.75rem; font-weight:700; color:var(--text-secondary);">قيد التجميع...</span>`}
                         <button onclick="deleteWish(${item.id})" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold;">حذف</button>
                     </div>
                 </div>
@@ -745,6 +868,36 @@
             saveData();
             showAlert("تم الحذف من القائمة");
         }
+    }
+
+    function exportBackup() {
+        const allData = { wallets, incomes, visionGoals, wishlist, transactionsLog };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = `haseen_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function importBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (data.wallets) wallets = data.wallets;
+                if (data.incomes) incomes = data.incomes;
+                if (data.visionGoals) visionGoals = data.visionGoals;
+                if (data.wishlist) wishlist = data.wishlist;
+                if (data.transactionsLog) transactionsLog = data.transactionsLog;
+                saveData();
+                showAlert("تم استرجاع النسخة الاحتياطية بنجاح!");
+            } catch (err) {
+                showAlert("ملف غير صالح!", "error");
+            }
+        };
+        reader.readAsText(file);
     }
 
     function renderVisionBoard() {
@@ -796,6 +949,7 @@
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
         initApp();
+        checkHawlAlerts();
     }
 </script>
 
