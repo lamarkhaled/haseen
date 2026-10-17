@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة حصين المالية | لمار وتجربة</title>
+    <title>بوابة حصين المالية | لمار</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -55,10 +55,10 @@
         .login-logo { width: 90px; margin-bottom: 20px; }
         .form-group { text-align: right; margin-bottom: 18px; }
         .form-group label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 0.9rem; }
-        .form-group input, .form-group select {
+        .form-group input {
             width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 12px; font-weight: 700; outline: none; background: var(--bg-main); transition: 0.3s;
         }
-        .form-group input:focus, .form-group select:focus { border-color: var(--gold-matte); background: var(--surface); }
+        .form-group input:focus { border-color: var(--gold-matte); background: var(--surface); }
         .btn-login {
             width: 100%; padding: 16px; background: var(--black-royal); color: var(--yellow-haseen);
             border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1rem;
@@ -77,7 +77,6 @@
             border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.85rem;
         }
         .btn-nav:hover { background: var(--yellow-soft); border-color: var(--gold-matte); }
-        .btn-share { background: var(--success-soft); color: var(--success); border-color: var(--success-soft); }
         .btn-logout { background: var(--danger-soft); color: var(--danger); border-color: var(--danger-soft); }
 
         .main-wrapper { max-width: 1400px; margin: 35px auto; padding: 0 20px 60px; }
@@ -211,20 +210,14 @@
 
 <div id="customAlert" class="custom-alert"><span id="alertIcon">✨</span><span id="alertText">رسالة...</span></div>
 
-<!-- شاشة تسجيل الدخول المتعددة -->
+<!-- شاشة تسجيل الدخول -->
 <div id="loginScreen">
     <div class="login-card">
         <img src="https://files.catbox.moe/kejbz2.png" alt="حصين" class="login-logo">
         <h1 style="font-weight:900; font-size:1.6rem; margin-bottom:5px;">بوابة حصين المالية</h1>
         <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:24px;">نظامك المالي الاحترافي لإدارة الثروة والمشاريع</p>
         <form onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label>اختاري المستخدمة</label>
-                <select id="userSelect">
-                    <option value="لمار">لمار (المالكة)</option>
-                    <option value="تجربة">تجربة (وضع الزوار والمعاينة)</option>
-                </select>
-            </div>
+            <div class="form-group"><label>اسم المستخدمة</label><input type="text" value="لمار" readonly style="color:var(--gold-matte);"></div>
             <div class="form-group"><label>الرمز السري</label><input type="password" id="passwordInput" placeholder="أدخلي الرمز..." autofocus required></div>
             <button type="submit" class="btn-login">تسجيل الدخول النظام 🔒</button>
         </form>
@@ -239,7 +232,6 @@
     </div>
     <div class="nav-actions">
         <span style="font-weight:800; color:var(--gold-matte); margin-left:15px; font-size:0.95rem;" id="welcomeText"></span>
-        <button class="btn-nav btn-share" onclick="shareSiteInfo()">🌐 مشاركة وعرض الموقع</button>
         <button class="btn-nav" onclick="window.print()">🖨️ طباعة التقرير / PDF</button>
         <button class="btn-nav" onclick="exportBackup()">📥 تصدير البيانات</button>
         <button class="btn-nav" onclick="document.getElementById('importFile').click()">📤 استرجاع</button>
@@ -604,45 +596,29 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    let currentUser = 'لمار';
-    let wallets = [];
-    let incomes = [];
-    let expenses = [];
-    let subscriptions = [];
-    let visionGoals = [];
-    let wishlist = [];
-    let ideas = [];
-    let transactionsLog = [];
-    let lastOutDate = '';
-    let sprintGoal = 0;
+    // استرجاع البيانات بأمان تام (إذا لم توجد بيانات سابقة فقط نضع القيم الافتراضية، ولن يتم مسح أي بيانات موجودة أبداً)
+    let wallets = JSON.parse(localStorage.getItem('haseen_wallets'));
+    if(!wallets || wallets.length === 0) {
+        wallets = [
+            { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
+            { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
+            { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+            { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
+        ];
+        localStorage.setItem('haseen_wallets', JSON.stringify(wallets));
+    }
+
+    let incomes = JSON.parse(localStorage.getItem('haseen_incomes')) || [];
+    let expenses = JSON.parse(localStorage.getItem('haseen_expenses')) || [];
+    let subscriptions = JSON.parse(localStorage.getItem('haseen_subs')) || [];
+    let visionGoals = JSON.parse(localStorage.getItem('haseen_vision')) || [];
+    let wishlist = JSON.parse(localStorage.getItem('haseen_wishlist')) || [];
+    let ideas = JSON.parse(localStorage.getItem('haseen_ideas')) || ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
+    let transactionsLog = JSON.parse(localStorage.getItem('haseen_tx_log')) || [];
+    let lastOutDate = localStorage.getItem('haseen_last_out') || new Date().toLocaleDateString('en-CA');
+    let sprintGoal = parseFloat(localStorage.getItem('haseen_sprint_goal')) || 0;
     let currentBank = 'rajhi';
     let editTargetId = null;
-
-    function loadUserData(username) {
-        currentUser = username;
-        const prefix = username === 'تجربة' ? 'exp_' : 'lamar_';
-        
-        wallets = JSON.parse(localStorage.getItem(prefix + 'haseen_wallets'));
-        if(!wallets || wallets.length === 0) {
-            wallets = [
-                { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: username === 'تجربة' ? 500 : 0, createdDate: new Date().toISOString() },
-                { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: username === 'تجربة' ? 3000 : 0, createdDate: new Date().toISOString() },
-                { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: username === 'تجربة' ? 200 : 0, createdDate: new Date().toISOString() },
-                { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: username === 'تجربة' ? 1000 : 0, createdDate: new Date().toISOString() }
-            ];
-            localStorage.setItem(prefix + 'haseen_wallets', JSON.stringify(wallets));
-        }
-
-        incomes = JSON.parse(localStorage.getItem(prefix + 'haseen_incomes')) || [];
-        expenses = JSON.parse(localStorage.getItem(prefix + 'haseen_expenses')) || [];
-        subscriptions = JSON.parse(localStorage.getItem(prefix + 'haseen_subs')) || [];
-        visionGoals = JSON.parse(localStorage.getItem(prefix + 'haseen_vision')) || [];
-        wishlist = JSON.parse(localStorage.getItem(prefix + 'haseen_wishlist')) || [];
-        ideas = JSON.parse(localStorage.getItem(prefix + 'haseen_ideas')) || ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
-        transactionsLog = JSON.parse(localStorage.getItem(prefix + 'haseen_tx_log')) || [];
-        lastOutDate = localStorage.getItem(prefix + 'haseen_last_out') || new Date().toLocaleDateString('en-CA');
-        sprintGoal = parseFloat(localStorage.getItem(prefix + 'haseen_sprint_goal')) || 0;
-    }
 
     function showAlert(msg, type = 'success') {
         const el = document.getElementById('customAlert');
@@ -665,23 +641,13 @@
 
     function handleLogin(e) {
         e.preventDefault();
-        const username = document.getElementById('userSelect').value;
         const pin = document.getElementById('passwordInput').value;
-        
-        let savedPin = '1234';
-        if (username === 'لمار') {
-            savedPin = localStorage.getItem('haseen_pin') || '1234';
-        } else if (username === 'تجربة') {
-            savedPin = '1234';
-        }
-
+        const savedPin = localStorage.getItem('haseen_pin') || '1234';
         if (pin === savedPin) {
             sessionStorage.setItem('haseen_logged_in', 'true');
-            sessionStorage.setItem('haseen_user', username);
-            loadUserData(username);
             document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('welcomeText').innerText = `أهلاً بكِ، ${username} ✨`;
-            showAlert(`أهلاً بكِ في نظام حصين، ${username}!`);
+            document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
+            showAlert("أهلاً بكِ في حصين، لمار!");
             initApp();
             checkHawlAlerts();
         } else { showAlert("الرمز السري غير صحيح!", "error"); }
@@ -689,13 +655,11 @@
     
     function logout() {
         sessionStorage.removeItem('haseen_logged_in');
-        sessionStorage.removeItem('haseen_user');
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('passwordInput').value = '';
     }
 
     function changePin() {
-        if(currentUser === 'تجربة') { showAlert("حساب التجربة افتراضي ورمز سرّي ثابت (1234)", "error"); return; }
         const oldP = document.getElementById('oldPin').value;
         const newP = document.getElementById('newPin').value;
         const saved = localStorage.getItem('haseen_pin') || '1234';
@@ -714,17 +678,16 @@
     }
 
     function saveData() {
-        const prefix = currentUser === 'تجربة' ? 'exp_' : 'lamar_';
-        localStorage.setItem(prefix + 'haseen_wallets', JSON.stringify(wallets));
-        localStorage.setItem(prefix + 'haseen_incomes', JSON.stringify(incomes));
-        localStorage.setItem(prefix + 'haseen_expenses', JSON.stringify(expenses));
-        localStorage.setItem(prefix + 'haseen_subs', JSON.stringify(subscriptions));
-        localStorage.setItem(prefix + 'haseen_vision', JSON.stringify(visionGoals));
-        localStorage.setItem(prefix + 'haseen_wishlist', JSON.stringify(wishlist));
-        localStorage.setItem(prefix + 'haseen_ideas', JSON.stringify(ideas));
-        localStorage.setItem(prefix + 'haseen_tx_log', JSON.stringify(transactionsLog));
-        localStorage.setItem(prefix + 'haseen_last_out', lastOutDate);
-        localStorage.setItem(prefix + 'haseen_sprint_goal', sprintGoal);
+        localStorage.setItem('haseen_wallets', JSON.stringify(wallets));
+        localStorage.setItem('haseen_incomes', JSON.stringify(incomes));
+        localStorage.setItem('haseen_expenses', JSON.stringify(expenses));
+        localStorage.setItem('haseen_subs', JSON.stringify(subscriptions));
+        localStorage.setItem('haseen_vision', JSON.stringify(visionGoals));
+        localStorage.setItem('haseen_wishlist', JSON.stringify(wishlist));
+        localStorage.setItem('haseen_ideas', JSON.stringify(ideas));
+        localStorage.setItem('haseen_tx_log', JSON.stringify(transactionsLog));
+        localStorage.setItem('haseen_last_out', lastOutDate);
+        localStorage.setItem('haseen_sprint_goal', sprintGoal);
         renderDashboard(); renderVisionBoard(); renderWishlist(); renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); calcStreak(); renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel(); calcRunway();
     }
 
@@ -904,7 +867,7 @@
         incomes.unshift({ amount: net, channel: channel, reason: rsn + (reinvestAmount>0 ? ` (تم اقتطاع ${reinvestAmount} ر.س لتطوير الأعمال)` : ''), date: new Date().toLocaleDateString('ar-SA') });
         saveData(); renderIncomes(); renderWallets(currentBank);
         document.getElementById('inc-gross').value = ''; document.getElementById('inc-cost').value = ''; document.getElementById('inc-reason').value = '';
-        showAlert(`تم تسجيل صافي الربح (${net} ر.س) بنجاح! 👏✨`);
+        showAlert(`تم تسجيل صافي الربح (${net} ر.س) بنجاح! شطورة يا لمار 👏✨`);
     }
 
     function addMonthlyExpense() {
@@ -1107,7 +1070,7 @@
             targetW.balance += amt;
             transactionsLog.unshift({ date: new Date().toLocaleDateString('ar-SA'), walletName: targetW.name + ' (توفير رغبة 💡)', type: 'in', amount: amt, note: 'ضبط النفس وتجنب شراء غير ضروري' });
             saveData(); document.getElementById('wishShedAmount').value = '';
-            showAlert(`وفرتِ ${amt} ر.س وأضفتها للمحفظة 👏✨`);
+            showAlert(`شطورة يا لمار! وفرتِ ${amt} ر.س وأضفتها للمحفظة 👏✨`);
         }
     }
 
@@ -1268,7 +1231,7 @@
         if(type === 'in') w.balance += amt;
         else {
             w.balance -= amt; lastOutDate = new Date().toLocaleDateString('en-CA');
-            showAlert("أنتبهي، سحبتِ مبلغ! راقبي أهدافك ⚠️", "warning");
+            showAlert("أنتبهي يا لمار، سحبتِ مبلغ! راقبي أهدافك ⚠️", "warning");
         }
 
         transactionsLog.unshift({ date: new Date().toLocaleDateString('ar-SA'), walletName: w.name, type: type, amount: amt, note: note });
@@ -1278,8 +1241,8 @@
 
         if(type === 'in' && newPct >= 100 && oldPct < 100) {
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#111111', '#FDE047'] });
-            showAlert(`أتممتِ هدف محفظة (${w.name}) 100% 🎯✨`);
-        } else if(type === 'in') { showAlert("تم الإيداع بنجاح!"); }
+            showAlert(`شطورة يا لمار! أتممتِ هدف محفظة (${w.name}) 100% 🎯✨`);
+        } else if(type === 'in') { showAlert("تم الإيداع بنجاح، خطوة ممتازة!"); }
         
         document.getElementById(`note-${id}`).value = ''; document.getElementById(`amt-${id}`).value = '';
     }
@@ -1323,8 +1286,8 @@
             const isWithdraw = val < item.saved; item.saved = val; saveData(); closeModal('editWishModal');
             if(item.saved >= item.price) {
                 confetti({ particleCount: 100, spread: 60, origin: { y: 0.6 } });
-                showAlert(`اكتمل هدف (${item.name}) وجاهز للشراء! 🛒✨`);
-            } else if(isWithdraw) { showAlert("سحبتِ من رصيد الأمنية! انتبهي ⚠️", "warning"); }
+                showAlert(`شطورة يا لمار! اكتمل هدف (${item.name}) وجاهز للشراء! 🛒✨`);
+            } else if(isWithdraw) { showAlert("سحبتِ من رصيد الأمنية! انتبهي ما تطول عليكِ الخطة ⚠️", "warning"); }
             else { showAlert("تم تحديث رصيد الغرض بنجاح!"); }
         }
     }
@@ -1343,7 +1306,7 @@
                         <img src="${item.img}" alt="${item.name}">
                         <h5>${item.name}</h5>
                         <div class="price">${item.saved.toLocaleString('ar-SA')} من ${item.price.toLocaleString('ar-SA')} ر.س • ${item.store}</div>
-                        ${!isReady ? `<div class="timeline-est">⏱️ متبقي تقريباً: ${weeksNeeded} أسابيع</div>` : ''}
+                        ${!isReady ? `<div class="timeline-est">⏱️ متبقي تقريباً: ${weeksNeeded} أسابيع (على ادخار 150/أسبوع)</div>` : ''}
                         <div style="font-size:0.75rem; color:var(--text-secondary);">نسبة تجميعك له: ${pct}%</div>
                         <div class="prog-bar"><div class="prog-fill ${isReady?'done':''}" style="width:${pct}%"></div></div>
                     </div>
@@ -1362,14 +1325,10 @@
         if(confirm("هل تريدين حذف هذا الغرض من القائمة؟")) { wishlist = wishlist.filter(w => w.id !== id); saveData(); showAlert("تم الحذف من القائمة"); }
     }
 
-    function shareSiteInfo() {
-        alert("✨ لمعاينة ومشاركة موقعك مع الآخرين:\n1. احفظي هذا الملف بصيغة index.html\. \n2. ارفعيه مجاناً على منصات مثل GitHub Pages أو Netlify أو Vercel.\n3. اسم المستخدم للزوار لمعاينة النظام هو: (تجربة) والرمز السري هو: (1234).");
-    }
-
     function exportBackup() {
         const allData = { wallets, incomes, expenses, subscriptions, visionGoals, wishlist, ideas, transactionsLog };
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData));
-        const a = document.createElement('a'); a.href = dataStr; a.download = `haseen_${currentUser}_backup.json`; a.click();
+        const a = document.createElement('a'); a.href = dataStr; a.download = `haseen_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
     }
 
     function importBackup(event) {
@@ -1387,7 +1346,7 @@
                 if (data.ideas) ideas = data.ideas;
                 if (data.transactionsLog) transactionsLog = data.transactionsLog;
                 saveData(); initApp();
-                showAlert("تم استرجاع البيانات بنجاح تام! ✨");
+                showAlert("تم استرجاع بياناتك ومحافظك وسجلاتك بنجاح تامة! ✨");
             } catch (err) { showAlert("ملف النسخة الاحتياطية غير صالح!", "error"); }
         };
         reader.readAsText(file);
@@ -1437,10 +1396,8 @@
     }
 
     if(sessionStorage.getItem('haseen_logged_in') === 'true') {
-        const savedUser = sessionStorage.getItem('haseen_user') || 'لمار';
         document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('welcomeText').innerText = `أهلاً بكِ، ${savedUser} ✨`;
-        loadUserData(savedUser);
+        document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
         initApp(); checkHawlAlerts();
     }
 </script>
