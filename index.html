@@ -645,12 +645,39 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    // المحافظ الأساسية الكاملة لجميع البنوك (الراجحي، الإنماء، D360، برق)
+    // القائمة الكاملة والمرتبطة لجميع محافظك الـ 24 الموزعة على الجهات الأربعة
     const defaultWallets = [
-        { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
-        { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
+        // أولاً: مصرف الراجحي
+        { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة (10%)", coverage: "تُقتطع فوراً وتُصرف في أوجه الخير طوال العام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r2", bank: "rajhi", name: "محفظة إفطار صائم (صدقات رمضان)", coverage: "مبلغ إضافي ومستقل (يستهدف 5,000 ريال) لدعم أهلك في رمضان", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r3", bank: "rajhi", name: "محفظة الأعياد المقدسة 🔒", coverage: "خط أحمر مقدس؛ لا يُصرف منها ريال واحد خارج أيام العيد الرسمية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r4", bank: "rajhi", name: "حساب رأس مال البزنس (Business Capital)", coverage: "لتمويل مشاريعك الخاصة (العود والسبح، بضائع، تغليف وإعلانات)", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r5", bank: "rajhi", name: "محفظة صيانة وتحديث الأجهزة", coverage: "مخصصة لصيانة وترقية اللابتوب والجوال لأجل عملك الحر", cap: 2000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "r6", bank: "rajhi", name: "محفظة الإجازات والرحلات العائلية", coverage: "للمساهمة في السفرات، الشاليهات والطلعات الجماعية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
+
+        // ثانياً: مصرف الإنماء
+        { id: "i1", bank: "inma", name: "صندوق الطوارئ الشخصي", coverage: "يُربط بعوائد شرعية (3 إلى 6 أشهر)، للأزمات الكبرى فقط", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i2", bank: "inma", name: "محفظة الأسنان والطوارئ الصحية", coverage: "معالجة الأسنان فوراً دون انتظار المواعيد الحكومية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i3", bank: "inma", name: "محفظة الذهب والاستثمار التراكمي", coverage: "لتجميع (2,500 - 3,000 ريال) وشراء سبيكة ذهب عيار 24", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i4", bank: "inma", name: "محفظة تجميع السيارة", coverage: "ادخار طويل المدى لأكثر من سنة لتجميع قيمة السيارة", cap: 30000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i5", bank: "inma", name: "محفظة السكن وتجهيز الأثاث", coverage: "لتطوير السكن الحالي وشراء القطع الأساسية الكبيرة", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i6", bank: "inma", name: "محفظة مساعدة الأسرة (طوارئ الأهل)", coverage: "رصيد أمان مخصص لدعم الأهل في أي ظرف مالي طارئ", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
+
+        // ثالثاً: تطبيق D360
+        { id: "d1", bank: "d360", name: "التسوق الشخصي والكشخة اليومية", coverage: "ميزانية شهرية للملابس والعبايات ومشتريات الخرجات", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d2", bank: "d360", name: "محفظة الهدايا والاحتفالات 🛑", coverage: "سقفها 2,000 ريال ولا تُغذى إلا لتعويض ما يُصرف منها", cap: 2000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d3", bank: "d360", name: "محفظة العناية والجمال", coverage: "مقسمة داخلياً (سكين كير + مكياج + عطور)", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d4", bank: "d360", name: "محفظة العلاج النفسي والاستشارات", coverage: "لجلسات الدعم النفسي لتفريغ الضغوط وتخفيف التوتر", cap: 1500, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d5", bank: "d360", name: "اختبارات القبول الجامعي وتطوير الذات", coverage: "رسوم اختبارات القبول، الكتب ودورات التصميم والتسويق", cap: 1500, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d6", bank: "d360", name: "الترفيه، الكتب، الهوايات ومكافآت المذاكرة", coverage: "كتب، روايات، خامات البدزلة وأحجار الراين وصمغ B-7000", cap: 800, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d7", bank: "d360", name: "حساب الأكل والمطاعم", coverage: "ميزانية شهرية محددة للطلبات الخارجية والمطاعم", cap: 800, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d8", bank: "d360", name: "حساب القهوة والماتشا", coverage: "محاصيل V60، الماتشا، الفريدو إسبريسو والكافيهات", cap: 500, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d9", bank: "d360", name: "محفظة الرغبات (Wishlist)", coverage: "حصّالة مرنة لتجميع مبلغ أي غرض كمالي فجأة", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d10", bank: "d360", name: "محفظة الطوارئ النثرية اليومية", coverage: "(100 - 200 ريال) للمفاجآت اليومية الصغيرة", cap: 200, balance: 0, createdDate: new Date().toISOString() },
+
+        // رابعاً: تطبيق برق - Barq
+        { id: "b1", bank: "barq", name: "حساب أوبر (المواصلات) 🚕", coverage: "توفير 200 ريال كحد أدنى دائم لمشاويرك في كل الأوقات", cap: 500, balance: 0, createdDate: new Date().toISOString() },
+        { id: "b2", bank: "barq", name: "حساب النت، النادي، والاشتراكات الثابتة", coverage: "نت وجوال + نادي رياضي + برامج التصميم وNotion", cap: 1000, balance: 0, createdDate: new Date().toISOString() }
     ];
 
     let wallets = [...defaultWallets];
