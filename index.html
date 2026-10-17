@@ -108,9 +108,11 @@
         }
         .todo-item.done { opacity: 0.55; background: var(--beige-dark); }
         .todo-item.done .todo-text { text-decoration: line-through; color: var(--text-secondary); }
-        .todo-checkbox {
-            width: 22px; height: 22px; cursor: pointer; accent-color: var(--black-royal);
-        }
+        .todo-checkbox { width: 22px; height: 22px; cursor: pointer; accent-color: var(--black-royal); }
+
+        /* Subs Grid */
+        .subs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; margin-top: 15px; }
+        .sub-card { background: var(--bg-main); border: 1px solid var(--border); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
 
         .log-table { width: 100%; border-collapse: collapse; text-align: right; margin-top: 15px; }
         .log-table th { background: var(--bg-main); padding: 12px; font-size: 0.85rem; color: var(--text-secondary); border-radius: 8px; }
@@ -163,7 +165,6 @@
         .prog-fill { height: 100%; background: var(--black-royal); transition: width 0.4s ease; }
         .prog-fill.done { background: var(--success); }
 
-        /* شمل تفاصيل المحفظة */
         .wallet-coverage {
             background: var(--bg-main); border: 1px solid var(--border); border-radius: 10px;
             padding: 8px 12px; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px; font-weight: 700;
@@ -208,7 +209,7 @@
     <div class="login-card">
         <img src="https://files.catbox.moe/kejbz2.png" alt="حصين" class="login-logo">
         <h1 style="font-weight:900; font-size:1.6rem; margin-bottom:5px;">بوابة حصين المالية</h1>
-        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:24px;">نظامك المالي الاحترافي لإدارة الثروة</p>
+        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:24px;">نظامك المالي الاحترافي لإدارة الثروة والمشاريع</p>
         <form onsubmit="handleLogin(event)">
             <div class="form-group"><label>اسم المستخدمة</label><input type="text" value="لمار" readonly style="color:var(--gold-matte);"></div>
             <div class="form-group"><label>الرمز السري</label><input type="password" id="passwordInput" placeholder="أدخلي الرمز..." autofocus required></div>
@@ -260,16 +261,34 @@
         <div class="kpi-card"><span class="k-label">🩺 مؤشر الصحة والتحول</span><div class="k-val" id="kpi-health" style="font-size:1.1rem; margin-top:10px;">ممتاز 🌟</div></div>
     </div>
 
-    <!-- ================= سكشن مصاريف والتزامات الشهر (To-Do List) ================= -->
-    <div class="box-panel" style="border-color:var(--gold-matte);">
+    <!-- ================= 2. متتبع اشتراكات أدوات العمل والبرامج ================= -->
+    <div class="box-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+                <h3 style="font-weight:900; font-size:1.2rem;">🛠️ متتبع اشتراكات البرامج والعمل (SaaS Subscriptions)</h3>
+                <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">إدارة وتتبع تجديد اشتراكات سلة، أدوات التصميم، والهوستنج وتاريخ الخصم.</p>
+            </div>
+            <button class="btn-nav" onclick="openModal('addSubModal')" style="background:var(--black-royal); color:var(--yellow-haseen); border:none;">+ إضافة اشتراك جديد</button>
+        </div>
+        <div class="subs-grid" id="subsContainer"></div>
+    </div>
+
+    <!-- ================= 5. تقرير ومقارنة أداء المواسم والقنوات ================= -->
+    <div class="box-panel" style="background: linear-gradient(135deg, #FFF, var(--bg-main)); border-color:var(--gold-matte);">
+        <h3 style="font-weight:900; font-size:1.2rem; margin-bottom:5px;">📊 تقرير ومقارنة أداء قنوات الدخل والمواسم</h3>
+        <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:15px;">تحليل بصري يحدد لكِ مصدر أرباحك الأكثر إنتاجية للتركيز والتوسع فيه.</p>
+        <div id="channelAnalyticsContainer" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px;"></div>
+    </div>
+
+    <!-- سكشن مصاريف والتزامات الشهر (To-Do List) -->
+    <div class="box-panel">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
             <div>
                 <h3 style="font-weight:900; font-size:1.2rem;">📋 مصاريف والتزامات الشهر (To-Do List)</h3>
                 <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">أضيفي التزاماتك وربطيها بالمحفظة، وعند الضغط على الصح يتم الخصم التلقائي فوراً!</p>
             </div>
-            <button class="btn-nav" onclick="openModal('addExpenseModal')" style="background:var(--black-royal); color:var(--yellow-haseen); border:none;">+ إضافة التزام جديد</button>
+            <button class="btn-nav" onclick="openModal('addExpenseModal')">+ إضافة التزام جديد</button>
         </div>
-
         <div class="todo-list" id="todoContainer"></div>
     </div>
 
@@ -321,13 +340,13 @@
             </div>
         </div>
 
-        <!-- متتبع الدخل وحاسبة الربح الصافي -->
+        <!-- ================= 4. متتبع الدخل + حافز إعادة استثمار الأرباح ================= -->
         <div class="box-panel" style="margin-bottom:0;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="font-weight:900; font-size:1.15rem;">📈 تنظيم وتتبع الدخل (الربح الصافي)</h3>
+                <h3 style="font-weight:900; font-size:1.15rem;">📈 تنظيم وتتبع الدخل (الربح الصافي + الاستثمار)</h3>
                 <span id="incomeGoalStatus" style="font-size:0.8rem; font-weight:bold; color:var(--gold-matte);">هدف الشهر: 5,000 ر.س</span>
             </div>
-            <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">سجلي أرباحك الصافية بعد خصم تكاليف التغليف والبضاعة.</p>
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:3px;">سجلي أرباحك مع إمكانية اقتطاع نسبة مئوية تلقائياً لتطوير أعمالك 🌱</p>
             
             <div class="prog-bar" style="margin: 10px 0;"><div class="prog-fill" id="incomeGoalBar" style="width:0%"></div></div>
 
@@ -341,9 +360,15 @@
                     <option value="منتجات رقمية">منتجات رقمية</option>
                 </select>
             </div>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <input type="text" id="inc-reason" placeholder="التفاصيل / العميل" style="flex:1; padding:10px; border:1px solid var(--border); border-radius:10px; background:var(--bg-main); font-weight:600;">
-                <button onclick="addIncomeNet()" style="padding:10px 20px; background:var(--success); color:white; border:none; border-radius:10px; font-weight:800; cursor:pointer;">+ حفظ صافي الربح</button>
+            <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; align-items:center;">
+                <input type="text" id="inc-reason" placeholder="التفاصيل / العميل" style="flex:1; min-width:150px; padding:10px; border:1px solid var(--border); border-radius:10px; background:var(--bg-main); font-weight:600;">
+                <select id="inc-reinvest" style="padding:10px; border:1px solid var(--border); border-radius:10px; background:var(--yellow-soft); font-weight:700;">
+                    <option value="0">بدون اقتطاع استثماري</option>
+                    <option value="10">اقتطاع 10% لتطوير الأعمال 🌱</option>
+                    <option value="15">اقتطاع 15% لتطوير الأعمال 🌱</option>
+                    <option value="20">اقتطاع 20% لتطوير الأعمال 🌱</option>
+                </select>
+                <button onclick="addIncomeNet()" style="padding:10px 20px; background:var(--success); color:white; border:none; border-radius:10px; font-weight:800; cursor:pointer;">+ حفظ الربح</button>
             </div>
             <div class="scroller" style="margin-top:15px;"><table class="log-table"><tbody id="incomeBody"></tbody></table></div>
         </div>
@@ -393,7 +418,7 @@
 
 </div>
 
-<!-- النوافذ المنبثقة Modals -->
+<!-- Modals -->
 <div class="modal" id="settingsModal">
     <div class="modal-content">
         <h3>تغيير الرمز السري 🔒</h3>
@@ -406,10 +431,28 @@
     </div>
 </div>
 
+<div class="modal" id="addSubModal">
+    <div class="modal-content">
+        <h3>إضافة اشتراك جديد 🛠️</h3>
+        <input type="text" id="subName" placeholder="اسم البرنامج (مثال: اشتراك منصة سلة)">
+        <input type="number" id="subPrice" placeholder="التكلفة (ر.س)">
+        <select id="subCycle">
+            <option value="شهري">تجديد شهري</option>
+            <option value="سنوي">تجديد سنوي</option>
+        </select>
+        <input type="date" id="subDueDate">
+        <select id="subWalletSelect"></select>
+        <div class="modal-btns">
+            <button onclick="addSubscription()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ الاشتراك</button>
+            <button onclick="closeModal('addSubModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
+        </div>
+    </div>
+</div>
+
 <div class="modal" id="addExpenseModal">
     <div class="modal-content">
         <h3>إضافة التزام / مصروف شهري 📋</h3>
-        <input type="text" id="expName" placeholder="اسم الالتزام (مثال: اشتراك متجر سلة)">
+        <input type="text" id="expName" placeholder="اسم الالتزام (مثال: فواتير)">
         <input type="number" id="expAmount" placeholder="المبلغ (ر.س)">
         <select id="expWalletSelect"></select>
         <div class="modal-btns">
@@ -426,8 +469,8 @@
             <option value="rajhi">مصرف الراجحي</option><option value="inma">مصرف الإنماء</option>
             <option value="d360">تطبيق D360</option><option value="barq">تطبيق برق</option>
         </select>
-        <input type="text" id="newWalletName" placeholder="اسم المحفظة (مثال: السفر)">
-        <input type="text" id="newWalletCoverage" placeholder="تشمل إيش بالضبط؟ (مثال: تذاكر، سكن، ترفيه)">
+        <input type="text" id="newWalletName" placeholder="اسم المحفظة">
+        <input type="text" id="newWalletCoverage" placeholder="تشمل إيش بالضبط؟">
         <input type="number" id="newWalletCap" placeholder="سقف الهدف بالريال (اتركيه فارغاً إذا مفتوح)">
         <div class="modal-btns">
             <button onclick="addNewWallet()" style="background:var(--success); color:white;">إضافة المحفظة</button>
@@ -464,7 +507,7 @@
 <div class="modal" id="addWishModal">
     <div class="modal-content">
         <h3>إضافة غرض لقائمة الأمنيات 🛍️</h3>
-        <input type="text" id="wishName" placeholder="اسم الغرض (مثال: حقيبة فخمة)">
+        <input type="text" id="wishName" placeholder="اسم الغرض">
         <input type="number" id="wishPrice" placeholder="السعر المطلوب (ر.س)">
         <input type="text" id="wishStore" placeholder="من وين؟ (المتجر أو الموقع)">
         <input type="text" id="wishUrl" placeholder="رابط المنتج (اختياري)">
@@ -498,15 +541,21 @@
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
     const defaultWallets = [
-        { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية، كفالة الأيتام، وسلة الطعام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
-        { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ الطبية، الإصلاحات المباشرة، والمصاريف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة، المطاعم، الهدايا الخفيفة، والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "b2", bank: "barq", name: "الاشتراكات الثابتة", coverage: "تشمل اشتراك سلة، أدوات التصميم، والاشتراكات الشهرية", cap: 750, balance: 0, createdDate: new Date().toISOString() }
+        { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
+    ];
+
+    const defaultSubs = [
+        { id: 1, name: "منصة سلة", price: 299, cycle: "شهري", dueDate: "2026-11-01", walletId: "b2" },
+        { id: 2, name: "أداة Make.com", price: 75, cycle: "شهري", dueDate: "2026-11-05", walletId: "b2" }
     ];
 
     let wallets = JSON.parse(localStorage.getItem('haseen_wallets')) || defaultWallets;
     let incomes = JSON.parse(localStorage.getItem('haseen_incomes')) || [];
     let expenses = JSON.parse(localStorage.getItem('haseen_expenses')) || [];
+    let subscriptions = JSON.parse(localStorage.getItem('haseen_subs')) || defaultSubs;
     let visionGoals = JSON.parse(localStorage.getItem('haseen_vision')) || [];
     let wishlist = JSON.parse(localStorage.getItem('haseen_wishlist')) || [];
     let ideas = JSON.parse(localStorage.getItem('haseen_ideas')) || ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
@@ -525,8 +574,8 @@
     }
 
     function openModal(id) {
-        if(id === 'addExpenseModal') {
-            const sel = document.getElementById('expWalletSelect');
+        if(id === 'addExpenseModal' || id === 'addSubModal') {
+            const sel = document.getElementById(id === 'addExpenseModal' ? 'expWalletSelect' : 'subWalletSelect');
             sel.innerHTML = '<option value="">اختاري المحفظة الخصمية...</option>';
             wallets.forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name} (${w.balance} ر.س)</option>`; });
         }
@@ -567,21 +616,23 @@
 
     function initApp() {
         renderSplitter(); renderDashboard(); renderTransactions(); renderIncomes();
-        renderExpenses(); renderVisionBoard(); renderWishlist(); renderWallets(currentBank); calcStreak();
-        renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel();
+        renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); renderVisionBoard();
+        renderWishlist(); renderWallets(currentBank); calcStreak(); renderTimelineBadges();
+        renderIdeas(); updateSprintUI(); calcTopChannel();
     }
 
     function saveData() {
         localStorage.setItem('haseen_wallets', JSON.stringify(wallets));
         localStorage.setItem('haseen_incomes', JSON.stringify(incomes));
         localStorage.setItem('haseen_expenses', JSON.stringify(expenses));
+        localStorage.setItem('haseen_subs', JSON.stringify(subscriptions));
         localStorage.setItem('haseen_vision', JSON.stringify(visionGoals));
         localStorage.setItem('haseen_wishlist', JSON.stringify(wishlist));
         localStorage.setItem('haseen_ideas', JSON.stringify(ideas));
         localStorage.setItem('haseen_tx_log', JSON.stringify(transactionsLog));
         localStorage.setItem('haseen_last_out', lastOutDate);
         localStorage.setItem('haseen_sprint_goal', sprintGoal);
-        renderDashboard(); renderVisionBoard(); renderWishlist(); renderExpenses(); calcStreak(); renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel();
+        renderDashboard(); renderVisionBoard(); renderWishlist(); renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); calcStreak(); renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel();
     }
 
     function renderDashboard() {
@@ -607,7 +658,130 @@
         document.getElementById('incomeGoalStatus').innerText = `محقق: ${totalIncomeThisMonth.toLocaleString('ar-SA')} من 5,000 ر.س`;
     }
 
-    /* --- To-Do Monthly Expenses Functions --- */
+    /* --- Subscriptions Functions (Feature 2) --- */
+    function addSubscription() {
+        const name = document.getElementById('subName').value;
+        const price = parseFloat(document.getElementById('subPrice').value);
+        const cycle = document.getElementById('subCycle').value;
+        const dueDate = document.getElementById('subDueDate').value;
+        const wId = document.getElementById('subWalletSelect').value;
+
+        if(!name || !price || !wId) { showAlert("الرجاء إدخال اسم الاشتراك، التكلفة والمحفظة!", "error"); return; }
+
+        subscriptions.push({ id: Date.now(), name, price, cycle, dueDate: dueDate || 'غير محدد', walletId: wId });
+        saveData(); closeModal('addSubModal');
+        document.getElementById('subName').value = ''; document.getElementById('subPrice').value = '';
+        showAlert("تمت إضافة الاشتراك بنجاح!");
+    }
+
+    function paySubscription(id) {
+        const sub = subscriptions.find(s => s.id === id);
+        if(!sub) return;
+        const w = wallets.find(x => x.id === sub.walletId);
+        if(!w) { showAlert("المحفظة المرتبطة بالاشتراك غير موجودة!", "error"); return; }
+        if(w.balance < sub.price) { showAlert("رصيد المحفظة غير كافٍ لسداد الاشتراك!", "error"); return; }
+
+        w.balance -= sub.price;
+        lastOutDate = new Date().toLocaleDateString('en-CA');
+        transactionsLog.unshift({ date: new Date().toLocaleDateString('ar-SA'), walletName: w.name, type: 'out', amount: sub.price, note: `تجديد اشتراك: ${sub.name}` });
+        saveData(); renderWallets(currentBank); renderTransactions();
+        showAlert(`تم سداد اشتراك (${sub.name}) بمبلغ ${sub.price} ر.س خصماً من محفظة ${w.name} 💳✔️`);
+    }
+
+    function deleteSubscription(id) {
+        if(confirm("حذف هذا الاشتراك من القائمة؟")) {
+            subscriptions = subscriptions.filter(s => s.id !== id);
+            saveData(); showAlert("تم حذف الاشتراك!");
+        }
+    }
+
+    function renderSubscriptions() {
+        const c = document.getElementById('subsContainer');
+        c.innerHTML = '';
+        subscriptions.forEach(sub => {
+            const w = wallets.find(x => x.id === sub.walletId);
+            c.innerHTML += `
+                <div class="sub-card">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="font-size:1rem;">${sub.name}</strong>
+                            <span style="font-size:0.75rem; background:var(--yellow-soft); border:1px solid var(--gold-matte); padding:2px 8px; border-radius:10px; font-weight:bold;">${sub.cycle}</span>
+                        </div>
+                        <div style="font-size:1.1rem; font-weight:900; color:var(--black-royal); margin:8px 0;">${sub.price.toLocaleString('ar-SA')} ر.س</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">خصم من: ${w ? w.name : 'محفظة محذوفة'}</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:2px;">تاريخ التجديد: ${sub.dueDate}</div>
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:12px;">
+                        <button onclick="paySubscription(${sub.id})" style="flex:1; background:var(--black-royal); color:var(--yellow-haseen); padding:8px; border-radius:8px; font-weight:bold; border:none; cursor:pointer;">💳 دفع وسداد</button>
+                        <button onclick="deleteSubscription(${sub.id})" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:bold;">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+        if(subscriptions.length === 0) c.innerHTML = `<p style="color:var(--text-secondary); font-size:0.85rem;">لا توجد اشتراكات مضافة.</p>`;
+    }
+
+    /* --- Seasonal & Channel Analytics (Feature 5) --- */
+    function renderChannelAnalytics() {
+        const c = document.getElementById('channelAnalyticsContainer');
+        c.innerHTML = '';
+        const totals = {};
+        let grandTotal = 0;
+
+        incomes.forEach(inc => {
+            totals[inc.channel] = (totals[inc.channel] || 0) + inc.amount;
+            grandTotal += inc.amount;
+        });
+
+        const channels = ["متجر إلكتروني / سلة", "تصميم ومشاريع", "استشارات وأعمال حرة", "منتجات رقمية"];
+        channels.forEach(chan => {
+            const amt = totals[chan] || 0;
+            const pct = grandTotal > 0 ? Math.round((amt / grandTotal) * 100) : 0;
+            c.innerHTML += `
+                <div style="background:var(--surface); padding:16px; border-radius:14px; border:1px solid var(--border); border-top:4px solid var(--black-royal);">
+                    <span style="font-size:0.8rem; font-weight:bold; color:var(--text-secondary);">${chan}</span>
+                    <div style="font-size:1.3rem; font-weight:900; margin:6px 0;">${amt.toLocaleString('ar-SA')} ر.س</div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:bold; color:var(--gold-matte);">
+                        <span>الحصة من الدخل:</span><span>${pct}%</span>
+                    </div>
+                    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+                </div>
+            `;
+        });
+    }
+
+    /* --- Income with Re-investment Allocator (Feature 4) --- */
+    function addIncomeNet() {
+        const gross = parseFloat(document.getElementById('inc-gross').value) || 0;
+        const cost = parseFloat(document.getElementById('inc-cost').value) || 0;
+        const net = gross - cost;
+        const channel = document.getElementById('inc-channel').value;
+        const rsn = document.getElementById('inc-reason').value;
+        const reinvestPct = parseFloat(document.getElementById('inc-reinvest').value) || 0;
+
+        if(net <= 0) { showAlert("الرجاء إدخال مبلغ صحيح للربح!", "error"); return; }
+
+        let reinvestAmount = 0;
+        if(reinvestPct > 0) {
+            reinvestAmount = (net * reinvestPct) / 100;
+            let bizWallet = wallets.find(w => w.id === 'b2') || wallets.find(w => w.name.includes('تطوير'));
+            if(bizWallet) {
+                bizWallet.balance += reinvestAmount;
+                transactionsLog.unshift({ date: new Date().toLocaleDateString('ar-SA'), walletName: bizWallet.name, type: 'in', amount: reinvestAmount, note: `اقتطاع تلقائي (${reinvestPct}%) لتطوير الأعمال من دخل: ${rsn}` });
+            }
+        }
+
+        incomes.unshift({ amount: net, channel: channel, reason: rsn + (reinvestAmount>0 ? ` (تم اقتطاع ${reinvestAmount} ر.س لتطوير الأعمال)` : ''), date: new Date().toLocaleDateString('ar-SA') });
+        saveData(); renderIncomes(); renderWallets(currentBank);
+        document.getElementById('inc-gross').value = ''; document.getElementById('inc-cost').value = ''; document.getElementById('inc-reason').value = '';
+        
+        if(reinvestAmount > 0) {
+            showAlert(`تم حفظ الربح الصافي وتخصيص ${reinvestAmount} ر.س تلقائياً لتطوير أعمالك 🌱!`);
+        } else {
+            showAlert(`تم تسجيل صافي الربح (${net} ر.س) بنجاح! شطورة يا لمار 👏✨`);
+        }
+    }
+
     function addMonthlyExpense() {
         const name = document.getElementById('expName').value;
         const amt = parseFloat(document.getElementById('expAmount').value);
@@ -627,7 +801,6 @@
 
         const w = wallets.find(x => x.id === exp.walletId);
         if(!exp.done) {
-            // الخصم التلقائي عند التحديد
             if(w) {
                 if(w.balance < exp.amount) { showAlert("رصيد المحفظة غير كافٍ لسداد هذا الالتزام!", "error"); return; }
                 w.balance -= exp.amount;
@@ -637,7 +810,6 @@
             exp.done = true;
             showAlert(`تم سداد التزام (${exp.name}) وخصم ${exp.amount} ر.س من محفظة ${w?w.name:''} ✔️`);
         } else {
-            // إلغاء التحديد وإرجاع المبلغ
             if(w) { w.balance += exp.amount; }
             exp.done = false;
             showAlert(`تم إلغاء سداد التزام (${exp.name}) وإعادة المبلغ للمحفظة`);
@@ -675,9 +847,7 @@
             `;
         });
 
-        if(expenses.length === 0) {
-            c.innerHTML = `<p style="color:var(--text-secondary); font-size:0.88rem;">لا توجد التزامات شهرية مضافة حالياً. أضيفي التزاماتك لتتابعيها!</p>`;
-        }
+        if(expenses.length === 0) c.innerHTML = `<p style="color:var(--text-secondary); font-size:0.88rem;">لا توجد التزامات شهرية مضافة.</p>`;
     }
 
     function calcStreak() {
@@ -698,8 +868,7 @@
     function startIncomeSprint() {
         const val = parseFloat(document.getElementById('sprintTarget').value);
         if(!val || val <= 0) { showAlert("أدخلي هدفاً صحيحاً للتحدي!", "error"); return; }
-        sprintGoal = val;
-        saveData();
+        sprintGoal = val; saveData();
         showAlert(`تم إطلاق تحدي الـ 30 يوم بهدف ${val} ر.س! ⏱️`);
     }
 
@@ -718,8 +887,7 @@
         if(targetW) {
             targetW.balance += amt;
             transactionsLog.unshift({ date: new Date().toLocaleDateString('ar-SA'), walletName: targetW.name + ' (توفير رغبة 💡)', type: 'in', amount: amt, note: 'ضبط النفس وتجنب شراء غير ضروري' });
-            saveData();
-            document.getElementById('wishShedAmount').value = '';
+            saveData(); document.getElementById('wishShedAmount').value = '';
             showAlert(`شطورة يا لمار! وفرتِ ${amt} ر.س وأضفتها للمحفظة 👏✨`);
         }
     }
@@ -730,8 +898,7 @@
     }
 
     function renderIdeas() {
-        const c = document.getElementById('ideasContainer');
-        c.innerHTML = '';
+        const c = document.getElementById('ideasContainer'); c.innerHTML = '';
         ideas.forEach((id, idx) => {
             c.innerHTML += `<div style="background:var(--bg-main); border:1px solid var(--border); padding:8px 14px; border-radius:20px; font-size:0.82rem; font-weight:bold; display:flex; align-items:center; gap:8px;">🌱 ${id} <span onclick="ideas.splice(${idx},1);saveData();" style="cursor:pointer; color:var(--danger);">✖</span></div>`;
         });
@@ -765,8 +932,7 @@
             { title: "الخبير المالي 👑", desc: "اكتمال كافة الأهداف", unlocked: false }
         ];
 
-        const container = document.getElementById('timelineContainer');
-        container.innerHTML = '';
+        const container = document.getElementById('timelineContainer'); container.innerHTML = '';
         steps.forEach(st => {
             container.innerHTML += `
                 <div class="timeline-step ${st.unlocked ? 'active' : ''}">
@@ -796,30 +962,13 @@
         }
     }
 
-    function addIncomeNet() {
-        const gross = parseFloat(document.getElementById('inc-gross').value) || 0;
-        const cost = parseFloat(document.getElementById('inc-cost').value) || 0;
-        const net = gross - cost;
-        const channel = document.getElementById('inc-channel').value;
-        const rsn = document.getElementById('inc-reason').value;
-
-        if(net <= 0) { showAlert("الرجاء إدخال مبلغ صحيح للربح!", "error"); return; }
-
-        incomes.unshift({ amount: net, channel: channel, reason: rsn + (cost>0?` (التكلفة الخصمية: ${cost} ر.س)`:''), date: new Date().toLocaleDateString('ar-SA') });
-        saveData(); renderIncomes();
-        document.getElementById('inc-gross').value = ''; document.getElementById('inc-cost').value = ''; document.getElementById('inc-reason').value = '';
-        showAlert(`تم تسجيل صافي الربح (${net} ر.س) بنجاح! شطورة يا لمار 👏✨`);
-    }
-
     function renderIncomes() {
-        const tbody = document.getElementById('incomeBody');
-        tbody.innerHTML = '';
+        const tbody = document.getElementById('incomeBody'); tbody.innerHTML = '';
         incomes.forEach(inc => { tbody.innerHTML += `<tr><td>${inc.date}</td><td style="color:var(--success); font-weight:800;">+${inc.amount.toLocaleString('ar-SA')} ر.س</td><td>${inc.channel}</td><td>${inc.reason || '-'}</td></tr>`; });
     }
 
     function renderTransactions() {
-        const tbody = document.getElementById('transactionsBody');
-        tbody.innerHTML = '';
+        const tbody = document.getElementById('transactionsBody'); tbody.innerHTML = '';
         transactionsLog.slice(0, 15).forEach(tx => {
             let color = tx.type === 'in' ? 'var(--success)' : 'var(--danger)';
             let sign = tx.type === 'in' ? '+' : '-';
@@ -846,9 +995,7 @@
     }
 
     function openEditWallet(id) {
-        editTargetId = id;
-        const w = wallets.find(x => x.id === id);
-        if(!w) return;
+        editTargetId = id; const w = wallets.find(x => x.id === id); if(!w) return;
         document.getElementById('editWalletName').value = w.name;
         document.getElementById('editWalletCoverage').value = w.coverage || '';
         document.getElementById('editWalletCap').value = w.cap > 0 ? w.cap : '';
@@ -856,8 +1003,7 @@
     }
 
     function saveEditedWallet() {
-        const w = wallets.find(x => x.id === editTargetId);
-        if(!w) return;
+        const w = wallets.find(x => x.id === editTargetId); if(!w) return;
         const newName = document.getElementById('editWalletName').value;
         const newCov = document.getElementById('editWalletCoverage').value;
         const newCap = parseFloat(document.getElementById('editWalletCap').value) || 0;
@@ -877,8 +1023,7 @@
     }
 
     function renderWallets(bankCode) {
-        const grid = document.getElementById('walletsContainer');
-        grid.innerHTML = '';
+        const grid = document.getElementById('walletsContainer'); grid.innerHTML = '';
         const bWallets = wallets.filter(w => w.bank === bankCode);
         
         bWallets.forEach(w => {
@@ -922,18 +1067,14 @@
         const amt = parseFloat(document.getElementById(`amt-${id}`).value);
         const note = document.getElementById(`note-${id}`).value || 'بدون تفاصيل';
         if(!amt || amt <= 0) { showAlert("الرجاء إدخال مبلغ صحيح!", "error"); return; }
-        
-        const w = wallets.find(x => x.id === id);
-        if(!w) return;
+        const w = wallets.find(x => x.id === id); if(!w) return;
 
         if(type === 'out' && amt > w.balance) { showAlert("الرصيد غير كافٍ في المحفظة!", "error"); return; }
 
         const oldPct = w.cap > 0 ? Math.floor((w.balance / w.cap) * 100) : 0;
-        
         if(type === 'in') w.balance += amt;
         else {
-            w.balance -= amt;
-            lastOutDate = new Date().toLocaleDateString('en-CA');
+            w.balance -= amt; lastOutDate = new Date().toLocaleDateString('en-CA');
             showAlert("أنتبهي يا لمار، سحبتِ مبلغ! راقبي أهدافك ⚠️", "warning");
         }
 
@@ -945,12 +1086,9 @@
         if(type === 'in' && newPct >= 100 && oldPct < 100) {
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#D4AF37', '#111111', '#FDE047'] });
             showAlert(`شطورة يا لمار! أتممتِ هدف محفظة (${w.name}) 100% 🎯✨`);
-        } else if(type === 'in') {
-            showAlert("تم الإيداع بنجاح، خطوة ممتازة!");
-        }
+        } else if(type === 'in') { showAlert("تم الإيداع بنجاح، خطوة ممتازة!"); }
         
-        document.getElementById(`note-${id}`).value = '';
-        document.getElementById(`amt-${id}`).value = '';
+        document.getElementById(`note-${id}`).value = ''; document.getElementById(`amt-${id}`).value = '';
     }
 
     function saveWishItem() {
@@ -964,19 +1102,9 @@
 
         const reader = new FileReader();
         reader.onload = function(e) {
-            wishlist.push({
-                id: Date.now(),
-                name: name,
-                price: price,
-                saved: 0,
-                store: store || 'متجر',
-                url: url || '#',
-                img: e.target.result || 'https://via.placeholder.com/150'
-            });
+            wishlist.push({ id: Date.now(), name: name, price: price, saved: 0, store: store || 'متجر', url: url || '#', img: e.target.result || 'https://via.placeholder.com/150' });
             saveData(); closeModal('addWishModal');
             document.getElementById('wishName').value = ''; document.getElementById('wishPrice').value = '';
-            document.getElementById('wishStore').value = ''; document.getElementById('wishUrl').value = '';
-            document.getElementById('wishImgInput').value = '';
             showAlert("تمت إضافة الغرض لقائمة الأمنيات بنجاح!");
         };
         if(file) reader.readAsDataURL(file);
@@ -988,8 +1116,7 @@
     }
 
     function openEditWishModal(id) {
-        const item = wishlist.find(w => w.id === id);
-        if(!item) return;
+        const item = wishlist.find(w => w.id === id); if(!item) return;
         document.getElementById('editWishId').value = item.id;
         document.getElementById('editWishSaved').value = item.saved || 0;
         openModal('editWishModal');
@@ -1000,25 +1127,17 @@
         const val = parseFloat(document.getElementById('editWishSaved').value) || 0;
         const item = wishlist.find(w => w.id === id);
         if(item) {
-            const isWithdraw = val < item.saved;
-            item.saved = val;
-            saveData();
-            closeModal('editWishModal');
+            const isWithdraw = val < item.saved; item.saved = val; saveData(); closeModal('editWishModal');
             if(item.saved >= item.price) {
                 confetti({ particleCount: 100, spread: 60, origin: { y: 0.6 } });
                 showAlert(`شطورة يا لمار! اكتمل هدف (${item.name}) وجاهز للشراء! 🛒✨`);
-            } else if(isWithdraw) {
-                showAlert("سحبتِ من رصيد الأمنية! انتبهي ما تطول عليكِ الخطة ⚠️", "warning");
-            } else {
-                showAlert("تم تحديث رصيد الغرض بنجاح!");
-            }
+            } else if(isWithdraw) { showAlert("سحبتِ من رصيد الأمنية! انتبهي ما تطول عليكِ الخطة ⚠️", "warning"); }
+            else { showAlert("تم تحديث رصيد الغرض بنجاح!"); }
         }
     }
 
     function renderWishlist() {
-        const grid = document.getElementById('wishlistGrid');
-        grid.innerHTML = '';
-
+        const grid = document.getElementById('wishlistGrid'); grid.innerHTML = '';
         wishlist.forEach(item => {
             let pct = Math.min(100, Math.floor((item.saved / item.price) * 100));
             let isReady = item.saved >= item.price;
@@ -1043,29 +1162,21 @@
                 </div>
             ` + grid.innerHTML;
         });
-
-        if(wishlist.length === 0) {
-            grid.innerHTML = `<p style="color:var(--text-secondary); font-size:0.9rem; grid-column: 1/-1;">لا توجد أغراض مضافة حالياً. أضفي أمنياتك لتتابعيها!</p>`;
-        }
+        if(wishlist.length === 0) grid.innerHTML = `<p style="color:var(--text-secondary); font-size:0.9rem; grid-column: 1/-1;">لا توجد أغراض مضافة حالياً.</p>`;
     }
 
     function deleteWish(id) {
-        if(confirm("هل تريدين حذف هذا الغرض من القائمة؟")) {
-            wishlist = wishlist.filter(w => w.id !== id);
-            saveData();
-            showAlert("تم الحذف من القائمة");
-        }
+        if(confirm("هل تريدين حذف هذا الغرض من القائمة؟")) { wishlist = wishlist.filter(w => w.id !== id); saveData(); showAlert("تم الحذف من القائمة"); }
     }
 
     function exportBackup() {
-        const allData = { wallets, incomes, expenses, visionGoals, wishlist, ideas, transactionsLog };
+        const allData = { wallets, incomes, expenses, subscriptions, visionGoals, wishlist, ideas, transactionsLog };
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData));
         const a = document.createElement('a'); a.href = dataStr; a.download = `haseen_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
     }
 
     function importBackup(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+        const file = event.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
@@ -1073,6 +1184,7 @@
                 if (data.wallets) wallets = data.wallets;
                 if (data.incomes) incomes = data.incomes;
                 if (data.expenses) expenses = data.expenses;
+                if (data.subscriptions) subscriptions = data.subscriptions;
                 if (data.visionGoals) visionGoals = data.visionGoals;
                 if (data.wishlist) wishlist = data.wishlist;
                 if (data.ideas) ideas = data.ideas;
@@ -1084,16 +1196,14 @@
     }
 
     function renderVisionBoard() {
-        const grid = document.getElementById('visionGrid');
-        grid.innerHTML = '';
+        const grid = document.getElementById('visionGrid'); grid.innerHTML = '';
         visionGoals.forEach(goal => {
-            const w = wallets.find(x => x.id === goal.walletId);
-            if(!w) return;
+            const w = wallets.find(x => x.id === goal.walletId); if(!w) return;
             let pct = Math.min(100, Math.floor((w.balance / w.cap) * 100));
             let isDone = pct >= 100;
             grid.innerHTML += `
                 <div class="vision-item">
-                    <button class="delete-vision-btn" onclick="deleteVisionGoal(${goal.id})" title="حذف الهدف" style="position:absolute; top:18px; left:18px; background:rgba(255,255,255,0.9); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; color:var(--danger); font-weight:bold;">✖</button>
+                    <button onclick="deleteVisionGoal(${goal.id})" title="حذف الهدف" style="position:absolute; top:18px; left:18px; background:rgba(255,255,255,0.9); border:none; border-radius:50%; width:28px; height:28px; cursor:pointer; color:var(--danger); font-weight:bold;">✖</button>
                     <img src="${goal.img}">
                     <div class="v-info">
                         <div style="font-weight:800; font-size:0.9rem; margin-bottom:4px;">${w.name}</div>
@@ -1101,7 +1211,7 @@
                     </div>
                 </div>`;
         });
-        grid.innerHTML += `<div onclick="openVisionModalBox()" style="background:var(--bg-main); border:2px dashed var(--border); border-radius:12px; height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary); transition:0.3s;" onmouseover="this.style.borderColor='var(--gold-matte)'" onmouseout="this.style.borderColor='var(--border)'"><span style="font-size:2rem; font-weight:bold;">+</span><strong style="font-size:0.9rem;">إضافة هدف جديد</strong></div>`;
+        grid.innerHTML += `<div onclick="openVisionModalBox()" style="background:var(--bg-main); border:2px dashed var(--border); border-radius:12px; height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; color:var(--text-secondary); transition:0.3s;"><span style="font-size:2rem; font-weight:bold;">+</span><strong style="font-size:0.9rem;">إضافة هدف جديد</strong></div>`;
     }
 
     function deleteVisionGoal(id) {
@@ -1131,8 +1241,7 @@
     if(sessionStorage.getItem('haseen_logged_in') === 'true') {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
-        initApp();
-        checkHawlAlerts();
+        initApp(); checkHawlAlerts();
     }
 </script>
 
