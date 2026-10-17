@@ -259,7 +259,7 @@
         <div class="timeline-track" id="timelineContainer"></div>
     </div>
 
-    <!-- المؤشرات العلوية KPI + 3. حاسبة الأمان المالي -->
+    <!-- المؤشرات العلوية KPI -->
     <div class="kpi-grid">
         <div class="kpi-card gold-kpi"><span class="k-label">إجمالي السيولة والثروة</span><div class="k-val" id="kpi-grand">0 ر.س</div></div>
         <div class="kpi-card streak-kpi"><span class="k-label">🔥 أيام بدون صرف</span><div class="k-val" id="kpi-streak">0 يوم</div></div>
@@ -428,7 +428,7 @@
 
 </div>
 
-<!-- Modals للتعديل والتحكم الكامل -->
+<!-- Modals -->
 <div class="modal" id="settingsModal">
     <div class="modal-content">
         <h3>تغيير الرمز السري 🔒</h3>
@@ -596,22 +596,20 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    const defaultWallets = [
-        { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
-        { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
-        { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
-    ];
+    // استدعاء البيانات بأمان ودون مسح أو تصفير للسابقة
+    let wallets = JSON.parse(localStorage.getItem('haseen_wallets')) || [];
+    if(wallets.length === 0) {
+        wallets = [
+            { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
+            { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
+            { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+            { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
+        ];
+    }
 
-    const defaultSubs = [
-        { id: 1, name: "منصة سلة", price: 299, cycle: "شهري", dueDate: "2026-11-01", walletId: "b2" },
-        { id: 2, name: "أداة Make.com", price: 75, cycle: "شهري", dueDate: "2026-11-05", walletId: "b2" }
-    ];
-
-    let wallets = JSON.parse(localStorage.getItem('haseen_wallets')) || defaultWallets;
     let incomes = JSON.parse(localStorage.getItem('haseen_incomes')) || [];
     let expenses = JSON.parse(localStorage.getItem('haseen_expenses')) || [];
-    let subscriptions = JSON.parse(localStorage.getItem('haseen_subs')) || defaultSubs;
+    let subscriptions = JSON.parse(localStorage.getItem('haseen_subs')) || [];
     let visionGoals = JSON.parse(localStorage.getItem('haseen_vision')) || [];
     let wishlist = JSON.parse(localStorage.getItem('haseen_wishlist')) || [];
     let ideas = JSON.parse(localStorage.getItem('haseen_ideas')) || ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
@@ -714,7 +712,6 @@
         document.getElementById('incomeGoalStatus').innerText = `محقق: ${totalIncomeThisMonth.toLocaleString('ar-SA')} من 5,000 ر.س`;
     }
 
-    /* 3. حاسبة الأمان المالي Runway Calculator */
     function calcRunway() {
         const totalEmergency = (wallets.find(w => w.id === 'i1') || { balance: 0 }).balance;
         const monthlySubs = subscriptions.reduce((acc, s) => acc + (s.cycle === 'شهري' ? s.price : s.price/12), 0);
@@ -729,7 +726,6 @@
         document.getElementById('kpi-runway').innerText = `${months} أشهر أمان`;
     }
 
-    /* --- Subscriptions Edit & Management --- */
     function addSubscription() {
         const name = document.getElementById('subName').value;
         const price = parseFloat(document.getElementById('subPrice').value);
@@ -820,7 +816,6 @@
         if(subscriptions.length === 0) c.innerHTML = `<p style="color:var(--text-secondary); font-size:0.85rem;">لا توجد اشتراكات مضافة.</p>`;
     }
 
-    /* Seasonal & Channel Analytics */
     function renderChannelAnalytics() {
         const c = document.getElementById('channelAnalyticsContainer');
         c.innerHTML = '';
@@ -849,7 +844,6 @@
         });
     }
 
-    /* Income with Re-investment Allocator */
     function addIncomeNet() {
         const gross = parseFloat(document.getElementById('inc-gross').value) || 0;
         const cost = parseFloat(document.getElementById('inc-cost').value) || 0;
@@ -881,7 +875,6 @@
         }
     }
 
-    /* Monthly Expense Edit */
     function addMonthlyExpense() {
         const name = document.getElementById('expName').value;
         const amt = parseFloat(document.getElementById('expAmount').value);
@@ -974,7 +967,6 @@
         if(expenses.length === 0) c.innerHTML = `<p style="color:var(--text-secondary); font-size:0.88rem;">لا توجد التزامات شهرية مضافة.</p>`;
     }
 
-    /* Transactions Log Edit */
     function openEditTxModal(idx) {
         const tx = transactionsLog[idx];
         if(!tx) return;
@@ -1028,7 +1020,6 @@
         });
     }
 
-    /* Ideas Vault Edit */
     function addIncomeIdea() {
         const idea = prompt("اكتبي فكرة أو خدمة جديدة لزيادة الدخل:");
         if(idea) { ideas.push(idea); saveData(); }
