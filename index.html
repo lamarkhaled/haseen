@@ -49,23 +49,23 @@
         }
         #loginScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .login-card {
-            background: var(--surface); width: 100%; max-width: 420px; padding: 40px 32px;
+            background: var(--surface); width: 100%; max-width: 440px; padding: 35px 28px;
             border-radius: 24px; border: 1px solid var(--gold-matte); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.08); text-align: center;
+            max-height: 90vh; overflow-y: auto;
         }
-        .login-logo { width: 90px; margin-bottom: 20px; }
-        .form-group { text-align: right; margin-bottom: 18px; }
-        .form-group label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 0.9rem; }
+        .login-logo { width: 80px; margin-bottom: 15px; }
+        .form-group { text-align: right; margin-bottom: 14px; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.85rem; }
         .form-group input {
-            width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 12px; font-weight: 700; outline: none; background: var(--bg-main); transition: 0.3s;
+            width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 12px; font-weight: 700; outline: none; background: var(--bg-main); transition: 0.3s; font-size: 0.9rem;
         }
         .form-group input:focus { border-color: var(--gold-matte); background: var(--surface); }
         .btn-login {
-            width: 100%; padding: 16px; background: var(--black-royal); color: var(--yellow-haseen);
-            border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1rem;
+            width: 100%; padding: 15px; background: var(--black-royal); color: var(--yellow-haseen);
+            border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1rem; margin-top: 5px;
         }
         .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-        /* تعديل الهيدر للجوال والشاشات الكبيرة ليصبح مرتباً وغير مزعج */
         .navbar {
             background: var(--surface); padding: 12px 20px; border-bottom: 2px solid var(--yellow-haseen);
             display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
@@ -219,16 +219,18 @@
 
 <div id="customAlert" class="custom-alert"><span id="alertIcon">✨</span><span id="alertText">رسالة...</span></div>
 
-<!-- شاشة تسجيل الدخول -->
+<!-- شاشة تسجيل الدخول والربط بـ GitHub Gist -->
 <div id="loginScreen">
     <div class="login-card">
         <img src="https://files.catbox.moe/kejbz2.png" alt="حصين" class="login-logo">
-        <h1 style="font-weight:900; font-size:1.6rem; margin-bottom:5px;">بوابة حصين المالية</h1>
-        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:24px;">نظامك المالي الاحترافي لإدارة الثروة والمشاريع</p>
+        <h1 style="font-weight:900; font-size:1.5rem; margin-bottom:5px;">بوابة حصين المالية</h1>
+        <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:18px;">المزامنة السحابية المجانية عبر GitHub Gist</p>
         <form onsubmit="handleLogin(event)">
             <div class="form-group"><label>اسم المستخدمة</label><input type="text" value="لمار" readonly style="color:var(--gold-matte);"></div>
-            <div class="form-group"><label>الرمز السري</label><input type="password" id="passwordInput" placeholder="أدخلي الرمز..." autofocus required></div>
-            <button type="submit" class="btn-login">تسجيل الدخول النظام 🔒</button>
+            <div class="form-group"><label>الرمز السري للنظام</label><input type="password" id="passwordInput" placeholder="أدخلي الرمز..." required></div>
+            <div class="form-group"><label>GitHub Personal Access Token</label><input type="password" id="ghTokenInput" placeholder="ghp_xxxx..." required></div>
+            <div class="form-group"><label>GitHub Gist ID</label><input type="text" id="ghGistInput" placeholder="معرف الـ Gist الطويل..." required></div>
+            <button type="submit" class="btn-login">ربط وتسجيل الدخول 🔒</button>
         </form>
     </div>
 </div>
@@ -241,10 +243,8 @@
     </div>
     <div class="nav-actions">
         <span style="font-weight:800; color:var(--gold-matte); margin-left:10px; font-size:0.9rem;" id="welcomeText"></span>
+        <button class="btn-nav" onclick="syncWithGitHub()" id="syncBtn">🔄 مزامنة سحابية</button>
         <button class="btn-nav" onclick="window.print()">🖨️ طباعة</button>
-        <button class="btn-nav" onclick="exportBackup()">📥 تصدير</button>
-        <button class="btn-nav" onclick="document.getElementById('importFile').click()">📤 استرجاع</button>
-        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
         <button class="btn-nav" onclick="openModal('settingsModal')">إعدادات الرمز ⚙️</button>
         <button class="btn-nav btn-logout" onclick="logout()">قفل الشاشة 🔒</button>
     </div>
@@ -440,11 +440,13 @@
 <!-- Modals -->
 <div class="modal" id="settingsModal">
     <div class="modal-content">
-        <h3>تغيير الرمز السري 🔒</h3>
-        <input type="password" id="oldPin" placeholder="الرمز القديم">
-        <input type="password" id="newPin" placeholder="الرمز الجديد (4 أرقام فأكثر)">
+        <h3>إعدادات النظام والربط ⚙️</h3>
+        <input type="password" id="oldPin" placeholder="الرمز السري القديم">
+        <input type="password" id="newPin" placeholder="الرمز السري الجديد (اختياري)">
+        <input type="password" id="settingsToken" placeholder="GitHub Token جديد">
+        <input type="text" id="settingsGist" placeholder="GitHub Gist ID جديد">
         <div class="modal-btns">
-            <button onclick="changePin()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ التغيير</button>
+            <button onclick="saveSettings()" style="background:var(--black-royal); color:var(--yellow-haseen);">حفظ التغييرات</button>
             <button onclick="closeModal('settingsModal')" style="background:var(--bg-main); border:1px solid var(--border);">إلغاء</button>
         </div>
     </div>
@@ -605,26 +607,16 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    let wallets = JSON.parse(localStorage.getItem('haseen_wallets'));
-    if(!wallets || wallets.length === 0) {
-        wallets = [
-            { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
-            { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
-            { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
-            { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
-        ];
-        localStorage.setItem('haseen_wallets', JSON.stringify(wallets));
-    }
-
-    let incomes = JSON.parse(localStorage.getItem('haseen_incomes')) || [];
-    let expenses = JSON.parse(localStorage.getItem('haseen_expenses')) || [];
-    let subscriptions = JSON.parse(localStorage.getItem('haseen_subs')) || [];
-    let visionGoals = JSON.parse(localStorage.getItem('haseen_vision')) || [];
-    let wishlist = JSON.parse(localStorage.getItem('haseen_wishlist')) || [];
-    let ideas = JSON.parse(localStorage.getItem('haseen_ideas')) || ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
-    let transactionsLog = JSON.parse(localStorage.getItem('haseen_tx_log')) || [];
-    let lastOutDate = localStorage.getItem('haseen_last_out') || new Date().toLocaleDateString('en-CA');
-    let sprintGoal = parseFloat(localStorage.getItem('haseen_sprint_goal')) || 0;
+    let wallets = [];
+    let incomes = [];
+    let expenses = [];
+    let subscriptions = [];
+    let visionGoals = [];
+    let wishlist = [];
+    let ideas = [];
+    let transactionsLog = [];
+    let lastOutDate = new Date().toLocaleDateString('en-CA');
+    let sprintGoal = 0;
     let currentBank = 'rajhi';
     let editTargetId = null;
 
@@ -643,23 +635,124 @@
             sel.innerHTML = '<option value="">اختاري المحفظة المرتبطة...</option>';
             wallets.forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name} (${w.balance} ر.س)</option>`; });
         }
+        if(id === 'settingsModal') {
+            document.getElementById('settingsToken').value = localStorage.getItem('gh_token') || '';
+            document.getElementById('settingsGist').value = localStorage.getItem('gh_gist_id') || '';
+        }
         document.getElementById(id).classList.add('show');
     }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-    // تم التعديل لاستخدام localStorage بدلاً من sessionStorage ليحفظ الدخول في الجوال بشكل دائم وثابت
-    function handleLogin(e) {
+    // دوال المزامنة مع GitHub Gist المجاني
+    async function fetchFromGitHub() {
+        const token = localStorage.getItem('gh_token');
+        const gistId = localStorage.getItem('gh_gist_id');
+        if (!token || !gistId) return false;
+
+        try {
+            const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+            if (!res.ok) throw new Error('فشل جلب البيانات من قيت هاب');
+            const data = await res.json();
+            const fileContent = data.files['haseen_data.json']?.content;
+            if (fileContent) {
+                const parsed = JSON.parse(fileContent);
+                wallets = parsed.wallets || [];
+                incomes = parsed.incomes || [];
+                expenses = parsed.expenses || [];
+                subscriptions = parsed.subscriptions || [];
+                visionGoals = parsed.visionGoals || [];
+                wishlist = parsed.wishlist || [];
+                ideas = parsed.ideas || [];
+                transactionsLog = parsed.transactionsLog || [];
+                lastOutDate = parsed.lastOutDate || new Date().toLocaleDateString('en-CA');
+                sprintGoal = parsed.sprintGoal || 0;
+                return true;
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        return false;
+    }
+
+    async function saveToGitHub() {
+        const token = localStorage.getItem('gh_token');
+        const gistId = localStorage.getItem('gh_gist_id');
+        if (!token || !gistId) return;
+
+        const allData = { wallets, incomes, expenses, subscriptions, visionGoals, wishlist, ideas, transactionsLog, lastOutDate, sprintGoal };
+        
+        try {
+            const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    files: {
+                        'haseen_data.json': {
+                            content: JSON.stringify(allData, null, 2)
+                        }
+                    }
+                })
+            });
+            if (res.ok) {
+                showAlert("تمت المزامنة وحفظ البيانات على قيت هاب بنجاح ☁️✨");
+            }
+        } catch (err) {
+            showAlert("فشل المزامنة مع قيت هاب!", "error");
+        }
+    }
+
+    async function syncWithGitHub() {
+        const btn = document.getElementById('syncBtn');
+        btn.innerText = "جاري المزامنة...";
+        const success = await fetchFromGitHub();
+        if (success) {
+            initApp();
+            showAlert("تم سحب أحدث بياناتك من قيت هاب بنجاح! 🔄");
+        } else {
+            showAlert("تعذر الاتصال بـ قيت هاب، تأكدي من التوكن والمعرف", "error");
+        }
+        btn.innerText = "🔄 مزامنة سحابية";
+    }
+
+    async function handleLogin(e) {
         e.preventDefault();
         const pin = document.getElementById('passwordInput').value;
+        const token = document.getElementById('ghTokenInput').value.trim();
+        const gistId = document.getElementById('ghGistInput').value.trim();
         const savedPin = localStorage.getItem('haseen_pin') || '1234';
+
         if (pin === savedPin) {
+            localStorage.setItem('gh_token', token);
+            localStorage.setItem('gh_gist_id', gistId);
             localStorage.setItem('haseen_logged_in', 'true');
+
+            showAlert("جاري جلب بياناتك من السحابة...");
+            const success = await fetchFromGitHub();
+            
+            if (!success && wallets.length === 0) {
+                // بيانات افتراضية أول مرة
+                wallets = [
+                    { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
+                    { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
+                    { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+                    { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
+                ];
+                ideas = ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
+                await saveToGitHub();
+            }
+
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
-            showAlert("أهلاً بكِ في حصين، لمار!");
             initApp();
             checkHawlAlerts();
-        } else { showAlert("الرمز السري غير صحيح!", "error"); }
+        } else { 
+            showAlert("الرمز السري للنظام غير صحيح!", "error"); 
+        }
     }
     
     function logout() {
@@ -668,15 +761,24 @@
         document.getElementById('passwordInput').value = '';
     }
 
-    function changePin() {
+    function saveSettings() {
         const oldP = document.getElementById('oldPin').value;
         const newP = document.getElementById('newPin').value;
+        const newToken = document.getElementById('settingsToken').value.trim();
+        const newGist = document.getElementById('settingsGist').value.trim();
         const saved = localStorage.getItem('haseen_pin') || '1234';
-        if(oldP !== saved) { showAlert("الرمز القديم غير صحيح!", "error"); return; }
-        if(newP.length < 4) { showAlert("الرمز يجب ألا يقل عن 4 أرقام", "error"); return; }
-        localStorage.setItem('haseen_pin', newP);
-        showAlert("تم تغيير الرمز بنجاح!");
+
+        if(oldP && oldP !== saved) { showAlert("الرمز القديم غير صحيح!", "error"); return; }
+        if(newP) {
+            if(newP.length < 4) { showAlert("الرمز الجديد يجب ألا يقل عن 4 أرقام", "error"); return; }
+            localStorage.setItem('haseen_pin', newP);
+        }
+        if(newToken) localStorage.setItem('gh_token', newToken);
+        if(newGist) localStorage.setItem('gh_gist_id', newGist);
+
+        showAlert("تم حفظ الإعدادات بنجاح!");
         closeModal('settingsModal');
+        syncWithGitHub();
     }
 
     function initApp() {
@@ -687,16 +789,7 @@
     }
 
     function saveData() {
-        localStorage.setItem('haseen_wallets', JSON.stringify(wallets));
-        localStorage.setItem('haseen_incomes', JSON.stringify(incomes));
-        localStorage.setItem('haseen_expenses', JSON.stringify(expenses));
-        localStorage.setItem('haseen_subs', JSON.stringify(subscriptions));
-        localStorage.setItem('haseen_vision', JSON.stringify(visionGoals));
-        localStorage.setItem('haseen_wishlist', JSON.stringify(wishlist));
-        localStorage.setItem('haseen_ideas', JSON.stringify(ideas));
-        localStorage.setItem('haseen_tx_log', JSON.stringify(transactionsLog));
-        localStorage.setItem('haseen_last_out', lastOutDate);
-        localStorage.setItem('haseen_sprint_goal', sprintGoal);
+        saveToGitHub(); // التحديث الفوري على قيت هاب
         renderDashboard(); renderVisionBoard(); renderWishlist(); renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); calcStreak(); renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel(); calcRunway();
     }
 
@@ -1334,33 +1427,6 @@
         if(confirm("هل تريدين حذف هذا الغرض من القائمة؟")) { wishlist = wishlist.filter(w => w.id !== id); saveData(); showAlert("تم الحذف من القائمة"); }
     }
 
-    function exportBackup() {
-        const allData = { wallets, incomes, expenses, subscriptions, visionGoals, wishlist, ideas, transactionsLog };
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData));
-        const a = document.createElement('a'); a.href = dataStr; a.download = `haseen_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
-    }
-
-    function importBackup(event) {
-        const file = event.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
-                if (data.wallets) wallets = data.wallets;
-                if (data.incomes) incomes = data.incomes;
-                if (data.expenses) expenses = data.expenses;
-                if (data.subscriptions) subscriptions = data.subscriptions;
-                if (data.visionGoals) visionGoals = data.visionGoals;
-                if (data.wishlist) wishlist = data.wishlist;
-                if (data.ideas) ideas = data.ideas;
-                if (data.transactionsLog) transactionsLog = data.transactionsLog;
-                saveData(); initApp();
-                showAlert("تم استرجاع بياناتك ومحافظك وسجلاتك بنجاح تامة! ✨");
-            } catch (err) { showAlert("ملف النسخة الاحتياطية غير صالح!", "error"); }
-        };
-        reader.readAsText(file);
-    }
-
     function renderVisionBoard() {
         const grid = document.getElementById('visionGrid'); grid.innerHTML = '';
         visionGoals.forEach(goal => {
@@ -1404,11 +1470,14 @@
         reader.readAsDataURL(file);
     }
 
-    // التحقق من localStorage بدلاً من sessionStorage لحالة تسجيل الدخول
-    if(localStorage.getItem('haseen_logged_in') === 'true') {
+    // التحقق المسبق من الجلسة وسحب البيانات تلقائياً إذا كانت مخزنة
+    if(localStorage.getItem('haseen_logged_in') === 'true' && localStorage.getItem('gh_token') && localStorage.getItem('gh_gist_id')) {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
-        initApp(); checkHawlAlerts();
+        fetchFromGitHub().then(() => {
+            initApp();
+            checkHawlAlerts();
+        });
     }
 </script>
 
