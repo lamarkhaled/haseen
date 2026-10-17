@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حصين المالية | Haseen Finance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            beige: '#F5F3E9', // بيج هادئ
+                            white: '#FFFFFF',
+                            charcoal: '#2C2C2C', // أسود/رمادي داكن
+                            gold: '#CBA153', // ذهبي مطفي فخم يندمج مع البيج
+                            goldHover: '#B58D44',
+                            goldSoft: '#F3EAD5',
+                            danger: '#D9534F',
+                            dangerSoft: '#F9E2E2',
+                            success: '#5CB85C',
+                            successSoft: '#E2F0E2'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: theme('colors.brand.beige'); color: theme('colors.brand.charcoal'); overflow-x: hidden; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: theme('colors.brand.gold'); border-radius: 10px; }
+        
+        /* Progress Bar */
+        .prog-bar { width: 100%; height: 8px; background: #E5E7EB; border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+        .prog-fill { height: 100%; background: theme('colors.brand.charcoal'); transition: width 0.5s ease-in-out; }
+        .prog-fill.gold { background: theme('colors.brand.gold'); }
+        .prog-fill.green { background: theme('colors.brand.success'); }
+
+        /* Login Background */
+        .login-bg { background: linear-gradient(135deg, #F5F3E9 0%, #E6DEC3 100%); }
+
+        /* Transitions */
+        .fade-in { animation: fadeIn 0.4s ease-in-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Glassmorphism */
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5); }
+
+        /* Confetti Canvas */
+        #confettiCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative">
+
+<canvas id="confettiCanvas"></canvas>
+
+<!-- ================= CUSTOM DIALOG BOX ================= -->
+<div id="customDialog" class="fixed inset-0 bg-black/50 z-[9999] hidden items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm border-t-4 border-brand-gold transform scale-95 transition-transform" id="dialogCard">
+        <h3 id="dialogTitle" class="text-xl font-bold text-brand-charcoal mb-2">تنبيه</h3>
+        <p id="dialogMessage" class="text-gray-600 mb-6 font-medium text-sm leading-relaxed"></p>
+        <div class="flex gap-3 justify-end">
+            <button id="dialogCancel" class="hidden px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 font-bold transition-colors">إلغاء</button>
+            <button id="dialogConfirm" class="px-5 py-2 rounded-xl bg-brand-charcoal text-brand-gold font-bold hover:bg-gray-800 transition-colors shadow-md">حسناً</button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= 1. LOGIN SCREEN (STRICTLY SEPARATED) ================= -->
+<div id="loginScreen" class="fixed inset-0 login-bg flex items-center justify-center z-[9000] p-4 transition-opacity duration-500">
+    <div class="bg-white/90 backdrop-blur-md w-full max-w-md p-8 rounded-[2rem] border border-white/50 shadow-[0_20px_50px_rgba(0,0,0,0.05)] text-center fade-in">
+        <img src="https://files.catbox.moe/kejbz2.png" alt="Haseen Logo" class="w-32 h-auto mx-auto mb-4 drop-shadow-md">
+        <h1 class="text-3xl font-black text-brand-charcoal mb-2 tracking-tight">حصين</h1>
+        <p class="text-brand-gold font-bold text-sm mb-8">نظام إدارة الثروة والمحافظ الاحترافي</p>
+
+        <form id="loginForm" class="text-right">
+            <div class="mb-5">
+                <label class="block text-sm font-bold text-brand-charcoal mb-2">اسم المستخدمة</label>
+                <input type="text" value="لمار خالد الحربي" readonly class="w-full p-3.5 rounded-xl border border-gray-200 bg-gray-50/50 font-bold text-gray-600 outline-none">
+            </div>
+            <div class="mb-8">
+                <label class="block text-sm font-bold text-brand-charcoal mb-2">رمز المرور السري</label>
+                <input type="password" id="passwordInput" placeholder="أدخلي رمز المرور..." required class="w-full p-3.5 rounded-xl border border-gray-300 focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 font-bold outline-none transition-all text-center tracking-widest text-lg">
+            </div>
+            <button type="submit" class="w-full py-4 bg-brand-charcoal text-brand-gold rounded-xl font-black text-lg hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                دخول بأمان <i class="fa-solid fa-shield-halved mr-2"></i>
+            </button>
+            <div id="loginError" class="hidden mt-4 p-3 bg-brand-dangerSoft text-brand-danger rounded-xl text-sm font-bold text-center">
+                رمز المرور غير صحيح!
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= MAIN APP WRAPPER (HIDDEN INITIALLY) ================= -->
+<div id="appWrapper" class="hidden flex-col min-h-screen">
+
+    <!-- TOP NAVBAR -->
+    <nav class="bg-brand-charcoal text-brand-white px-6 py-4 sticky top-0 z-[100] shadow-md flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="showDashboard()">
+            <img src="https://files.catbox.moe/kejbz2.png" alt="Logo" class="w-10 h-10 object-contain bg-white rounded-lg p-1">
+            <div>
+                <h2 class="text-xl font-black tracking-wide text-brand-gold">حصين</h2>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <button onclick="showDashboard()" class="text-white hover:text-brand-gold px-3 py-2 rounded-xl text-sm font-bold transition-colors">
+                <i class="fa-solid fa-house"></i> الرئيسية
+            </button>
+            <button onclick="openPinModal()" class="bg-white/5 text-brand-gold border border-white/10 px-3 py-2 rounded-xl text-sm font-bold hover:bg-brand-gold hover:text-brand-charcoal transition-colors">
+                <i class="fa-solid fa-key"></i>
+            </button>
+            <button onclick="logout()" class="bg-brand-dangerSoft/10 text-brand-danger px-3 py-2 rounded-xl text-sm font-bold hover:bg-brand-danger hover:text-white transition-colors">
+                <i class="fa-solid fa-power-off"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 2. MAIN DASHBOARD VIEW -->
+    <div id="mainDashboardView" class="max-w-7xl mx-auto w-full px-4 py-8 flex-1 space-y-8 fade-in">
+        
+        <!-- Welcome & Motivation -->
+        <div class="flex flex-col md:flex-row gap-6 items-stretch">
+            <div class="flex-1 glass-card p-6 rounded-3xl relative overflow-hidden group">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-brand-gold/10 rounded-full blur-2xl group-hover:bg-brand-gold/20 transition-all"></div>
+                <h2 class="text-2xl font-black text-brand-charcoal mb-2">أهلاً بكِ، لمار ✨</h2>
+                <p class="text-brand-gold font-bold mb-4" id="dailyQuote">"الادخار ليس تقييداً لحريتك، بل هو شراء لحريتك المستقبلية."</p>
+                <div class="bg-brand-charcoal text-white inline-block px-5 py-3 rounded-2xl shadow-lg">
+                    <span class="text-xs text-brand-gold block mb-1">إجمالي ثروتك الحالية</span>
+                    <span class="text-3xl font-black" id="kpi-grand">0 ر.س</span>
+                </div>
+            </div>
+
+            <!-- Gamification: No Spend Challenge -->
+            <div class="md:w-1/3 glass-card p-6 rounded-3xl text-center flex flex-col justify-center items-center border border-brand-gold/30">
+                <i class="fa-solid fa-seedling text-4xl text-brand-success mb-3"></i>
+                <h3 class="text-lg font-black text-brand-charcoal">تحدي أيام بلا صرف</h3>
+                <div class="text-4xl font-black text-brand-gold my-2" id="streakDays">0</div>
+                <p class="text-xs text-gray-500 mb-4 font-bold">يوم متتالي من التحكم المالي</p>
+                <button onclick="incrementStreak()" class="bg-brand-successSoft text-brand-success px-4 py-2 rounded-xl font-bold text-sm hover:bg-brand-success hover:text-white transition-colors">
+                    سجلت يوماً بدون صرف! 💪
+                </button>
+            </div>
+        </div>
+
+        <!-- Banks Grid (Cards) -->
+        <div>
+            <h3 class="text-xl font-black text-brand-charcoal mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-building-columns text-brand-gold"></i> محافظ البنوك
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Rajhi -->
+                <div onclick="showBankDetails('rajhi')" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-brand-gold cursor-pointer transition-all transform hover:-translate-y-1 group">
+                    <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-brand-goldSoft transition-colors">
+                        <img src="https://files.catbox.moe/kejbz2.png" class="w-6 h-6 opacity-80" alt="icon">
+                    </div>
+                    <h4 class="text-lg font-black text-brand-charcoal mb-1">مصرف الراجحي</h4>
+                    <p class="text-xs text-gray-500 font-bold mb-4">بوابة الاستقبال والبركة</p>
+                    <div class="text-xl font-black text-brand-gold" id="kpi-rajhi">0 ر.س</div>
+                </div>
+                <!-- Inma -->
+                <div onclick="showBankDetails('inma')" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-brand-gold cursor-pointer transition-all transform hover:-translate-y-1 group">
+                    <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-brand-goldSoft transition-colors">
+                        <i class="fa-solid fa-shield-halved text-brand-charcoal opacity-80"></i>
+                    </div>
+                    <h4 class="text-lg font-black text-brand-charcoal mb-1">مصرف الإنماء</h4>
+                    <p class="text-xs text-gray-500 font-bold mb-4">الخزنة والأمان</p>
+                    <div class="text-xl font-black text-brand-gold" id="kpi-inma">0 ر.س</div>
+                </div>
+                <!-- D360 -->
+                <div onclick="showBankDetails('d360')" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-brand-gold cursor-pointer transition-all transform hover:-translate-y-1 group">
+                    <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-brand-goldSoft transition-colors">
+                        <i class="fa-solid fa-mobile-screen text-brand-charcoal opacity-80"></i>
+                    </div>
+                    <h4 class="text-lg font-black text-brand-charcoal mb-1">تطبيق D360</h4>
+                    <p class="text-xs text-gray-500 font-bold mb-4">الصرف اليومي والمعيشة</p>
+                    <div class="text-xl font-black text-brand-gold" id="kpi-d360">0 ر.س</div>
+                </div>
+                <!-- Barq -->
+                <div onclick="showBankDetails('barq')" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-brand-gold cursor-pointer transition-all transform hover:-translate-y-1 group">
+                    <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-brand-goldSoft transition-colors">
+                        <i class="fa-solid fa-bolt text-brand-charcoal opacity-80"></i>
+                    </div>
+                    <h4 class="text-lg font-black text-brand-charcoal mb-1">تطبيق برق</h4>
+                    <p class="text-xs text-gray-500 font-bold mb-4">الالتزامات الثابتة</p>
+                    <div class="text-xl font-black text-brand-gold" id="kpi-barq">0 ر.س</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INCOME SPLITTER -->
+        <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-2 bg-brand-gold"></div>
+            <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                <div>
+                    <h3 class="text-xl font-black text-brand-charcoal">حاسبة التوزيع الذكية <i class="fa-solid fa-calculator text-brand-gold ml-2"></i></h3>
+                    <p class="text-sm text-gray-500 font-medium mt-1">أدخلي الدخل الجديد لمعرفة التوزيع المثالي:</p>
+                </div>
+                <div class="flex flex-wrap gap-3 w-full md:w-auto">
+                    <input type="number" id="splitInput" value="5000" oninput="updateSplitter()" class="flex-1 md:w-48 p-3 border border-gray-300 rounded-xl font-bold text-lg outline-none focus:border-brand-gold bg-gray-50 text-center">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div class="bg-brand-goldSoft p-4 rounded-2xl text-center border border-brand-gold/20">
+                    <small class="text-xs font-bold text-brand-charcoal block mb-1">10% الصدقات</small>
+                    <span class="text-lg font-black text-brand-gold" id="sp-10">500 ر.س</span>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-2xl text-center border border-gray-100">
+                    <small class="text-xs font-bold text-gray-500 block mb-1">30% الإنماء (أمان)</small>
+                    <span class="text-lg font-black text-brand-charcoal" id="sp-30">1,500 ر.س</span>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-2xl text-center border border-gray-100">
+                    <small class="text-xs font-bold text-gray-500 block mb-1">25% الراجحي (أهداف)</small>
+                    <span class="text-lg font-black text-brand-charcoal" id="sp-25-r">1,250 ر.س</span>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-2xl text-center border border-gray-100">
+                    <small class="text-xs font-bold text-gray-500 block mb-1">25% D360 (معيشة)</small>
+                    <span class="text-lg font-black text-brand-charcoal" id="sp-25-d">1,250 ر.س</span>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-2xl text-center border border-gray-100">
+                    <small class="text-xs font-bold text-gray-500 block mb-1">10% برق (التزامات)</small>
+                    <span class="text-lg font-black text-brand-charcoal" id="sp-10-b">500 ر.س</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 3. BANK DETAILS VIEW (DRILL-DOWN) -->
+    <div id="bankDetailsView" class="hidden max-w-7xl mx-auto w-full px-4 py-8 flex-1 fade-in">
+        
+        <!-- Header -->
+        <div class="flex flex-wrap justify-between items-center bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-8">
+            <div class="flex items-center gap-4">
+                <button onclick="showDashboard()" class="w-10 h-10 bg-gray-50 text-gray-600 rounded-full hover:bg-brand-gold hover:text-white transition-colors shadow-inner flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <div>
+                    <h2 class="text-2xl font-black text-brand-charcoal" id="bd-title">اسم البنك</h2>
+                    <p class="text-sm font-bold text-brand-gold mt-1" id="bd-total">إجمالي: 0 ر.س</p>
+                </div>
+            </div>
+            <button onclick="openModal('walletModal')" class="bg-brand-charcoal text-brand-gold px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors shadow-md mt-4 md:mt-0">
+                <i class="fa-solid fa-plus ml-1"></i> إضافة محفظة
+            </button>
+        </div>
+
+        <!-- Wallets Grid -->
+        <div id="walletsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamically populated -->
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- Pin Modal -->
+<div id="pinModal" class="fixed inset-0 bg-black/60 z-[2000] hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl border-t-4 border-brand-gold">
+        <h3 class="text-lg font-black text-brand-charcoal mb-4">تغيير رمز الدخول</h3>
+        <input type="password" id="newPinInput" placeholder="الرمز الجديد..." class="w-full p-3 border border-gray-300 rounded-xl mb-4 font-bold outline-none focus:border-brand-gold text-center tracking-widest text-lg">
+        <div class="flex gap-2">
+            <button onclick="saveNewPin()" class="flex-1 bg-brand-charcoal text-brand-gold py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors">حفظ</button>
+            <button onclick="closeModal('pinModal')" class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Wallet Modal -->
+<div id="walletModal" class="fixed inset-0 bg-black/60 z-[2000] hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border-t-4 border-brand-gold max-h-[90vh] overflow-y-auto">
+        <h3 id="walletModalTitle" class="text-xl font-black text-brand-charcoal mb-4">إضافة محفظة جديدة</h3>
+        
+        <input type="hidden" id="editWalletId">
+        <input type="hidden" id="editWalletBank"> <!-- Auto set based on current view -->
+        
+        <div class="space-y-4">
+            <div id="bankSelectorDiv">
+                <label class="block text-sm font-bold text-gray-700 mb-1">البنك / التطبيق</label>
+                <select id="walletBank" class="w-full p-3 border border-gray-300 rounded-xl font-bold outline-none focus:border-brand-gold bg-white">
+                    <option value="rajhi">مصرف الراجحي</option>
+                    <option value="inma">مصرف الإنماء</option>
+                    <option value="d360">تطبيق D360</option>
+                    <option value="barq">تطبيق برق</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">اسم المحفظة</label>
+                <input type="text" id="walletName" placeholder="مثال: السفر..." class="w-full p-3 border border-gray-300 rounded-xl font-bold outline-none focus:border-brand-gold">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">الهدف (السقف) بالريال</label>
+                <input type="number" id="walletCap" placeholder="0 يعني مفتوح بدون هدف..." class="w-full p-3 border border-gray-300 rounded-xl font-bold outline-none focus:border-brand-gold">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">التصنيفات الفرعية (مفصولة بفاصلة)</label>
+                <input type="text" id="walletSubs" value="مصروف عام" class="w-full p-3 border border-gray-300 rounded-xl font-medium outline-none focus:border-brand-gold text-sm">
+            </div>
+        </div>
+
+        <div class="flex gap-2 mt-6">
+            <button onclick="saveWallet()" class="flex-[2] bg-brand-charcoal text-brand-gold py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors">حفظ المحفظة</button>
+            <button onclick="closeModal('walletModal')" class="flex-1 bg-gray-100 text-gray-600 py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ================= DATA & SETTINGS =================
+    const STORAGE_KEY = 'haseen_data_v3';
+    const PIN_KEY = 'haseen_pin_v3';
+    const STREAK_KEY = 'haseen_streak';
+
+    const quotes = [
+        "القرش الأبيض ينفع في اليوم الأسود.",
+        "الادخار ليس تقييداً لحريتك، بل هو شراء لحريتك المستقبلية.",
+        "قطرة بعد قطرة تشكل بحراً، ريال بعد ريال يبني ثروة.",
+        "من راقب مصاريفه، عاش في سعة.",
+        "الاستثمار الحقيقي يبدأ بالتحكم في نفقاتك اليومية.",
+        "لا تدخري ما يتبقى بعد الإنفاق، بل أنفقي ما يتبقى بعد الادخار."
+    ];
+
+    const bankMeta = {
+        rajhi: { title: "مصرف الراجحي", icon: "fa-building-columns" },
+        inma: { title: "مصرف الإنماء", icon: "fa-shield-halved" },
+        d360: { title: "تطبيق D360", icon: "fa-mobile-screen" },
+        barq: { title: "تطبيق برق", icon: "fa-bolt" }
+    };
+
+    let stateWallets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    let currentBankView = null; // null = dashboard, string = bank key
+    let streakCount = parseInt(localStorage.getItem(STREAK_KEY)) || 0;
+
+    // Seed default data if empty
+    if(stateWallets.length === 0) {
+        stateWallets = [
+            { id: "w1", bank: "rajhi", name: "محفظة الصدقات", cap: 0, balance: 0, spent: 0, subs: ["صدقة جارية"], logs: [] },
+            { id: "w2", bank: "inma", name: "صندوق الطوارئ", cap: 10000, balance: 0, spent: 0, subs: ["طوارئ"], logs: [] },
+            { id: "w3", bank: "d360", name: "المصروف اليومي", cap: 2000, balance: 0, spent: 0, subs: ["قهوة","أكل"], logs: [] }
+        ];
+    }
+
+    // ================= CUSTOM DIALOG =================
+    function customMessage(msg, type = 'alert', onConfirm = null) {
+        const dialog = document.getElementById('customDialog');
+        const card = document.getElementById('dialogCard');
+        const title = document.getElementById('dialogTitle');
+        const message = document.getElementById('dialogMessage');
+        const btnCancel = document.getElementById('dialogCancel');
+        const btnConfirm = document.getElementById('dialogConfirm');
+
+        message.innerText = msg;
+        dialog.classList.remove('hidden');
+        dialog.classList.add('flex');
+        
+        btnCancel.classList.add('hidden');
+        btnConfirm.onclick = null;
+        btnCancel.onclick = () => closeDialog();
+
+        if (type === 'confirm') {
+            title.innerText = "تأكيد الإجراء";
+            title.className = "text-xl font-bold text-brand-danger mb-2";
+            card.className = "bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm border-t-4 border-brand-danger transform scale-95 transition-transform";
+            btnCancel.classList.remove('hidden');
+            btnConfirm.className = "px-5 py-2 rounded-xl bg-brand-danger text-white font-bold hover:bg-red-700 transition-colors shadow-md";
+            btnConfirm.innerText = "تأكيد";
+            btnConfirm.onclick = () => { closeDialog(); if(onConfirm) onConfirm(); };
+        } else {
+            title.innerText = "تنبيه";
+            title.className = "text-xl font-bold text-brand-charcoal mb-2";
+            card.className = "bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm border-t-4 border-brand-gold transform scale-95 transition-transform";
+            btnConfirm.className = "px-5 py-2 rounded-xl bg-brand-charcoal text-brand-gold font-bold hover:bg-gray-800 transition-colors shadow-md";
+            btnConfirm.innerText = "حسناً";
+            btnConfirm.onclick = () => { closeDialog(); if(onConfirm) onConfirm(); };
+        }
+
+        setTimeout(() => { card.classList.remove('scale-95'); card.classList.add('scale-100'); }, 10);
+    }
+    function closeDialog() {
+        const dialog = document.getElementById('customDialog');
+        const card = document.getElementById('dialogCard');
+        card.classList.remove('scale-100');
+        card.classList.add('scale-95');
+        setTimeout(() => { dialog.classList.remove('flex'); dialog.classList.add('hidden'); }, 150);
+    }
+
+    // ================= AUTH & STARTUP =================
+    function initApp() {
+        // Random Quote
+        document.getElementById('dailyQuote').innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+        document.getElementById('streakDays').innerText = streakCount;
+        
+        if (sessionStorage.getItem('haseen_logged') === '1') {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('appWrapper').classList.remove('hidden');
+            document.getElementById('appWrapper').classList.add('flex');
+            calculateTotals();
+        }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const pin = localStorage.getItem(PIN_KEY) || '1234';
+        if (document.getElementById('passwordInput').value === pin) {
+            sessionStorage.setItem('haseen_logged', '1');
+            document.getElementById('loginScreen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('flex');
+                document.getElementById('appWrapper').classList.remove('hidden');
+                document.getElementById('appWrapper').classList.add('flex');
+                calculateTotals();
+                if(currentBankView) showBankDetails(currentBankView);
+            }, 500);
+        } else {
+            document.getElementById('loginError').classList.remove('hidden');
+        }
+    });
+
+    function logout() {
+        sessionStorage.removeItem('haseen_logged');
+        location.reload();
+    }
+
+    // ================= NAVIGATION =================
+    function showDashboard() {
+        currentBankView = null;
+        document.getElementById('bankDetailsView').classList.add('hidden');
+        document.getElementById('mainDashboardView').classList.remove('hidden');
+        calculateTotals();
+    }
+
+    function showBankDetails(bankKey) {
+        currentBankView = bankKey;
+        document.getElementById('mainDashboardView').classList.add('hidden');
+        document.getElementById('bankDetailsView').classList.remove('hidden');
+        
+        const meta = bankMeta[bankKey];
+        document.getElementById('bd-title').innerHTML = `<i class="fa-solid ${meta.icon} text-brand-gold ml-2"></i> ${meta.title}`;
+        
+        renderWallets(bankKey);
+    }
+
+    // ================= RENDERING LOGIC =================
+    function calculateTotals() {
+        let sums = { rajhi: 0, inma: 0, d360: 0, barq: 0, grand: 0 };
+        stateWallets.forEach(w => { sums[w.bank] += w.balance; sums.grand += w.balance; });
+        
+        document.getElementById('kpi-grand').innerText = sums.grand.toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('kpi-rajhi').innerText = sums.rajhi.toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('kpi-inma').innerText = sums.inma.toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('kpi-d360').innerText = sums.d360.toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('kpi-barq').innerText = sums.barq.toLocaleString('ar-SA') + ' ر.س';
+    }
+
+    function renderWallets(bankKey) {
+        const grid = document.getElementById('walletsGrid');
+        grid.innerHTML = '';
+        
+        const bWallets = stateWallets.filter(w => w.bank === bankKey);
+        let bTotal = 0;
+        
+        bWallets.forEach(w => {
+            bTotal += w.balance;
+            let pct = w.cap > 0 ? Math.min(100, Math.round((w.balance / w.cap) * 100)) : 100;
+            let isComplete = (w.cap > 0 && w.balance >= w.cap);
+            let remain = w.cap > 0 ? Math.max(0, w.cap - w.balance) : 'مفتوح';
+            
+            const optionsHtml = w.subs.map(s => `<option value="${s}">${s}</option>`).join('');
+            
+            const card = document.createElement('div');
+            card.className = `bg-white border rounded-3xl p-6 shadow-sm flex flex-col justify-between relative overflow-hidden transition-all ${isComplete ? 'border-brand-success ring-2 ring-brand-success/20' : 'border-gray-200 hover:shadow-lg'}`;
+            
+            // Celebration Badge
+            let badgeHtml = isComplete ? `
+                <div class="absolute top-4 left-4 bg-brand-success text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md animate-bounce">
+                    واو! أنجزتي الهدف 🎉
+                </div>
+            ` : '';
+
+            card.innerHTML = `
+                ${badgeHtml}
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-black text-brand-charcoal pl-24">${w.name}</h3>
+                        <div class="flex gap-1 absolute top-4 left-4 ${isComplete ? 'hidden' : ''}">
+                            <button onclick="editWalletInit('${w.id}')" class="w-8 h-8 bg-gray-100 text-gray-600 rounded-lg hover:bg-brand-gold hover:text-white transition-colors" title="تعديل"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteWallet('${w.id}')" class="w-8 h-8 bg-brand-dangerSoft text-brand-danger rounded-lg hover:bg-brand-danger hover:text-white transition-colors" title="حذف"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-2xl p-4 grid grid-cols-2 gap-2 text-center mb-4 border border-gray-100">
+                        <div>
+                            <span class="block text-[11px] text-gray-500 font-bold mb-1">الرصيد الحالي</span>
+                            <span class="block text-lg font-black ${isComplete ? 'text-brand-success' : 'text-brand-charcoal'}">${w.balance.toLocaleString()}</span>
+                        </div>
+                        <div class="border-r border-gray-200">
+                            <span class="block text-[11px] text-gray-500 font-bold mb-1">المتبقي للهدف</span>
+                            <span class="block text-lg font-black text-gray-600">${typeof remain === 'number' ? remain.toLocaleString() : remain}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between text-xs font-bold text-gray-500 mb-2">
+                        <span>${pct}% نسبة الإنجاز</span>
+                        <span>الهدف: ${w.cap > 0 ? w.cap.toLocaleString() : 'مفتوح'}</span>
+                    </div>
+                    <div class="prog-bar">
+                        <div class="prog-fill ${isComplete ? 'green' : (pct > 70 ? 'gold' : '')}" style="width:${pct}%"></div>
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-5 border-t border-gray-100">
+                    <div class="flex gap-2 mb-3">
+                        <input type="number" id="amt-${w.id}" placeholder="المبلغ..." class="w-1/3 p-2.5 text-sm border border-gray-200 rounded-xl font-bold outline-none focus:border-brand-gold bg-gray-50">
+                        <select id="sub-${w.id}" class="w-2/3 p-2.5 text-sm border border-gray-200 rounded-xl font-bold outline-none focus:border-brand-gold bg-gray-50">${optionsHtml}</select>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="executeTx('${w.id}', 'in')" class="flex-1 bg-brand-charcoal text-brand-gold py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors shadow-sm"><i class="fa-solid fa-plus mr-1"></i> إيداع</button>
+                        <button onclick="executeTx('${w.id}', 'out')" class="flex-1 bg-white border border-gray-300 text-brand-danger py-2.5 rounded-xl text-sm font-bold hover:bg-brand-dangerSoft transition-colors"><i class="fa-solid fa-minus mr-1"></i> سحب</button>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        document.getElementById('bd-total').innerText = `إجمالي المحافظ: ${bTotal.toLocaleString('ar-SA')} ر.س`;
+    }
+
+    // ================= TRANSACTIONS =================
+    function executeTx(wId, type) {
+        const amtVal = document.getElementById(`amt-${wId}`).value;
+        const amount = parseFloat(amtVal);
+        if (!amount || amount <= 0) return customMessage('الرجاء إدخال مبلغ صحيح.');
+
+        const sub = document.getElementById(`sub-${wId}`).value;
+        const w = stateWallets.find(x => x.id === wId);
+        
+        if (type === 'out' && amount > w.balance) {
+            return customMessage('رصيد المحفظة لا يكفي!');
+        }
+
+        const oldBalance = w.balance;
+
+        if (type === 'in') {
+            w.balance += amount;
+            // Check for celebration
+            if(w.cap > 0 && oldBalance < w.cap && w.balance >= w.cap) {
+                triggerConfetti();
+            }
+        } else {
+            w.balance -= amount;
+            w.spent += amount;
+            // Reset streak on withdraw
+            streakCount = 0;
+            localStorage.setItem(STREAK_KEY, streakCount);
+            if(currentBankView === null) document.getElementById('streakDays').innerText = streakCount;
+        }
+
+        w.logs.unshift({ type: type, amount: amount, sub: sub, date: new Date().toLocaleDateString('ar-SA') });
+        saveData();
+    }
+
+    // ================= WALLET CRUD =================
+    function saveData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stateWallets));
+        if (currentBankView) renderWallets(currentBankView);
+        else calculateTotals();
+    }
+
+    function openModal(id) { 
+        document.getElementById(id).classList.remove('hidden'); 
+        document.getElementById(id).classList.add('flex');
+        
+        // Setup default bank in add modal
+        if (id === 'walletModal' && !document.getElementById('editWalletId').value) {
+            document.getElementById('walletModalTitle').innerText = 'إضافة محفظة جديدة';
+            if(currentBankView) {
+                document.getElementById('walletBank').value = currentBankView;
+                document.getElementById('bankSelectorDiv').classList.add('hidden');
+            } else {
+                document.getElementById('bankSelectorDiv').classList.remove('hidden');
+            }
+        }
+    }
+    
+    function closeModal(id) { 
+        document.getElementById(id).classList.remove('flex'); 
+        document.getElementById(id).classList.add('hidden');
+        if(id === 'walletModal') resetWalletForm();
+    }
+
+    function resetWalletForm() {
+        document.getElementById('editWalletId').value = '';
+        document.getElementById('walletName').value = '';
+        document.getElementById('walletCap').value = '';
+        document.getElementById('walletSubs').value = 'مصروف عام';
+        document.getElementById('bankSelectorDiv').classList.remove('hidden');
+    }
+
+    function editWalletInit(wId) {
+        const w = stateWallets.find(x => x.id === wId);
+        if(!w) return;
+        
+        document.getElementById('editWalletId').value = w.id;
+        document.getElementById('walletBank').value = w.bank;
+        document.getElementById('walletName').value = w.name;
+        document.getElementById('walletCap').value = w.cap;
+        document.getElementById('walletSubs').value = w.subs.join(', ');
+        document.getElementById('walletModalTitle').innerText = 'تعديل المحفظة';
+        document.getElementById('bankSelectorDiv').classList.add('hidden');
+        
+        openModal('walletModal');
+    }
+
+    function saveWallet() {
+        const id = document.getElementById('editWalletId').value;
+        const bank = document.getElementById('walletBank').value;
+        const name = document.getElementById('walletName').value.trim();
+        const cap = parseFloat(document.getElementById('walletCap').value) || 0;
+        let subs = document.getElementById('walletSubs').value.split(',').map(s => s.trim()).filter(s => s !== '');
+        
+        if(!name) return customMessage('اسم المحفظة مطلوب.');
+        if(subs.length === 0) subs = ['مصروف عام'];
+
+        if (id) {
+            const w = stateWallets.find(x => x.id === id);
+            w.name = name; w.cap = cap; w.subs = subs;
+        } else {
+            stateWallets.push({ id: 'w_' + Date.now(), bank: bank, name: name, cap: cap, balance: 0, spent: 0, subs: subs, logs: [] });
+        }
+        
+        closeModal('walletModal');
+        saveData();
+    }
+
+    function deleteWallet(wId) {
+        customMessage('هل أنت متأكدة من حذف هذه المحفظة نهائياً؟', 'confirm', () => {
+            stateWallets = stateWallets.filter(x => x.id !== wId);
+            saveData();
+        });
+    }
+
+    // ================= UTILS & GAMIFICATION =================
+    function updateSplitter() {
+        const v = parseFloat(document.getElementById('splitInput').value) || 0;
+        document.getElementById('sp-10').innerText = (v * 0.10).toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('sp-30').innerText = (v * 0.30).toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('sp-25-r').innerText = (v * 0.25).toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('sp-25-d').innerText = (v * 0.25).toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('sp-10-b').innerText = (v * 0.10).toLocaleString('ar-SA') + ' ر.س';
+    }
+
+    function incrementStreak() {
+        streakCount++;
+        localStorage.setItem(STREAK_KEY, streakCount);
+        document.getElementById('streakDays').innerText = streakCount;
+        triggerConfetti();
+        customMessage(`رائع! سجلتِ يومك الـ ${streakCount} بدون صرف. استمري يا لمار!`);
+    }
+
+    function openPinModal() {
+        document.getElementById('newPinInput').value = '';
+        openModal('pinModal');
+    }
+
+    function saveNewPin() {
+        const p = document.getElementById('newPinInput').value.trim();
+        if(p.length < 4) return customMessage('الرمز يجب أن يكون 4 خانات على الأقل.');
+        localStorage.setItem(PIN_KEY, p);
+        closeModal('pinModal');
+        customMessage('تم تحديث الرمز السري بنجاح.');
+    }
+
+    // ================= CONFETTI ANIMATION =================
+    function triggerConfetti() {
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        let pieces = [];
+        const colors = ['#CBA153', '#5CB85C', '#2C2C2C', '#F3EAD5'];
+        
+        for (let i = 0; i < 150; i++) {
+            pieces.push({
+                x: canvas.width / 2,
+                y: canvas.height / 2 + 100,
+                vx: (Math.random() - 0.5) * 20,
+                vy: (Math.random() - 1) * 20 - 5,
+                size: Math.random() * 10 + 5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rot: Math.random() * 360,
+                rotSpeed: (Math.random() - 0.5) * 10
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            pieces.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.5; // gravity
+                p.rot += p.rotSpeed;
+                if (p.y < canvas.height) active = true;
+                
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rot * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                ctx.restore();
+            });
+            if (active) requestAnimationFrame(animate);
+            else ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        animate();
+    }
+
+    // Resize canvas safely
+    window.addEventListener('resize', () => {
+        const canvas = document.getElementById('confettiCanvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    initApp();
+</script>
+
+</body>
+</html>
