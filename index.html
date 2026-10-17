@@ -646,13 +646,21 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    let wallets = [];
+    // المحافظ الأساسية الافتراضية الثابتة
+    const defaultWallets = [
+        { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
+        { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+        { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
+    ];
+
+    let wallets = [...defaultWallets];
     let incomes = [];
     let expenses = [];
     let subscriptions = [];
     let visionGoals = [];
     let wishlist = [];
-    let ideas = [];
+    let ideas = ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
     let transactionsLog = [];
     let lastOutDate = new Date().toLocaleDateString('en-CA');
     let sprintGoal = 0;
@@ -682,7 +690,7 @@
         if (window.fbLoadData) {
             const data = await window.fbLoadData();
             if (data && data.wallets && data.wallets.length > 0) {
-                wallets = data.wallets || [];
+                wallets = data.wallets;
                 incomes = data.incomes || [];
                 expenses = data.expenses || [];
                 subscriptions = data.subscriptions || [];
@@ -693,14 +701,7 @@
                 lastOutDate = data.lastOutDate || new Date().toLocaleDateString('en-CA');
                 sprintGoal = data.sprintGoal || 0;
             } else {
-                // المحافظ الأساسية الأربع الأصلية بدون أي نقصان أو تعديل
-                wallets = [
-                    { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
-                    { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
-                    { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
-                    { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
-                ];
-                ideas = ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
+                wallets = [...defaultWallets];
                 saveData();
             }
         }
