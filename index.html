@@ -207,7 +207,6 @@
         .bank-tab.active { background: var(--black-royal); color: var(--yellow-haseen); border-color: var(--black-royal); box-shadow: var(--shadow); }
         .btn-add-wallet { background: var(--success-soft); color: var(--success); border-color: var(--success-soft); }
 
-        /* تم تعديل عرض الكروت هنا لضمان ظهور جميع المحافظ الـ 24 بسلاسة تامة على الجوال والشاشات الكبيرة */
         .wallets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
         .w-card { 
             background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 20px; 
@@ -647,9 +646,8 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    // القائمة الكاملة والمرتبة لجميع محافظك الـ 24 بدقة
+    // المحافظ الـ 24 الكاملة والمرتبة
     const defaultWallets = [
-        // أولاً: مصرف الراجحي
         { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة (10%)", coverage: "تُقتطع فوراً وتُصرف في أوجه الخير طوال العام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
         { id: "r2", bank: "rajhi", name: "محفظة إفطار صائم (صدقات رمضان)", coverage: "مبلغ إضافي ومستقل لدعم أهلك في رمضان", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
         { id: "r3", bank: "rajhi", name: "محفظة الأعياد المقدسة 🔒", coverage: "خط أحمر مقدس؛ لا يُصرف منها إلا أيام العيد الرسمية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
@@ -657,7 +655,6 @@
         { id: "r5", bank: "rajhi", name: "محفظة صيانة وتحديث الأجهزة", coverage: "مخصصة لصيانة وترقية اللابتوب والجوال للعمل الحر", cap: 2000, balance: 0, createdDate: new Date().toISOString() },
         { id: "r6", bank: "rajhi", name: "محفظة الإجازات والرحلات العائلية", coverage: "للمساهمة في السفرات والشاليهات والطلعات الجماعية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
 
-        // ثانياً: مصرف الإنماء
         { id: "i1", bank: "inma", name: "صندوق الطوارئ الشخصي", coverage: "يُربط بعوائد شرعية (3 إلى 6 أشهر) للأزمات الكبرى فقط", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
         { id: "i2", bank: "inma", name: "محفظة الأسنان والطوارئ الصحية", coverage: "معالجة الأسنان فوراً دون انتظار المواعيد الحكومية", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
         { id: "i3", bank: "inma", name: "محفظة الذهب والاستثمار التراكمي", coverage: "لتجميع وشراء سبيكة ذهب صافي عيار 24", cap: 3000, balance: 0, createdDate: new Date().toISOString() },
@@ -665,7 +662,6 @@
         { id: "i5", bank: "inma", name: "محفظة السكن وتجهيز الأثاث", coverage: "لتطوير السكن الحالي وشراء القطع الأساسية الكبيرة", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
         { id: "i6", bank: "inma", name: "محفظة مساعدة الأسرة (طوارئ الأهل)", coverage: "رصيد أمان مخصص لدعم الأهل في أي ظرف طارئ", cap: 5000, balance: 0, createdDate: new Date().toISOString() },
 
-        // ثالثاً: تطبيق D360
         { id: "d1", bank: "d360", name: "التسوق الشخصي والكشخة اليومية", coverage: "ميزانية شهرية للملابس والعبايات ومشتريات الخرجات", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
         { id: "d2", bank: "d360", name: "محفظة الهدايا والاحتفالات 🛑", coverage: "سقفها 2,000 ريال ولا تُغذى إلا لتعويض ما يُصرف منها", cap: 2000, balance: 0, createdDate: new Date().toISOString() },
         { id: "d3", bank: "d360", name: "محفظة العناية والجمال", coverage: "مقسمة داخلياً (سكين كير + مكياج + عطور)", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
@@ -677,7 +673,6 @@
         { id: "d9", bank: "d360", name: "محفظة الرغبات (Wishlist)", coverage: "حصّالة مرنة لتجميع مبلغ أي غرض كمالي فجأة", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
         { id: "d10", bank: "d360", name: "محفظة الطوارئ النثرية اليومية", coverage: "(100 - 200 ريال) للمفاجآت اليومية الصغيرة", cap: 200, balance: 0, createdDate: new Date().toISOString() },
 
-        // رابعاً: تطبيق برق - Barq
         { id: "b1", bank: "barq", name: "حساب أوبر (المواصلات) 🚕", coverage: "توفير 200 ريال كحد أدنى دائم لمشاويرك في كل الأوقات", cap: 500, balance: 0, createdDate: new Date().toISOString() },
         { id: "b2", bank: "barq", name: "حساب النت، النادي، والاشتراكات الثابتة", coverage: "نت وجوال + نادي رياضي + برامج التصميم وNotion", cap: 1000, balance: 0, createdDate: new Date().toISOString() }
     ];
@@ -718,6 +713,7 @@
         if (window.fbLoadData) {
             const data = await window.fbLoadData();
             if (data && data.wallets && data.wallets.length > 0) {
+                // دمج ذكي يحافظ على المحافظ الجديدة والقديمة ولا يمسح شيئاً
                 wallets = data.wallets;
                 incomes = data.incomes || [];
                 expenses = data.expenses || [];
@@ -743,12 +739,13 @@
         renderDashboard(); renderVisionBoard(); renderWishlist(); renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); calcStreak(); renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel(); calcRunway();
     }
 
+    // زر المزامنة صار محدث للشاشة وسحب أحدث بيانات بدون استبدال قسري
     async function manualSync() {
         const btn = document.getElementById('syncBtn');
-        btn.innerText = "جاري المزامنة...";
+        btn.innerText = "جاري التحديث...";
         await loadDataFromCloud();
         initApp();
-        showAlert("تمت المزامنة مع السحابة بنجاح! ☁️✨");
+        showAlert("تم تحديث البيانات من السحابة بنجاح! ☁️✨");
         btn.innerText = "🔄 مزامنة سحابية";
     }
 
@@ -1426,7 +1423,6 @@
         if(confirm("هل تريدين حذف هذا الغرض من القائمة؟")) { wishlist = wishlist.filter(w => w.id !== id); saveData(); showAlert("تم الحذف من القائمة"); }
     }
 
-    // دوال لوحة الرؤية المحدثة (تدعم التعديل والربط بأي محفظة من الـ 24)
     function renderVisionBoard() {
         const grid = document.getElementById('visionGrid'); grid.innerHTML = '';
         visionGoals.forEach(goal => {
@@ -1462,7 +1458,6 @@
         
         const sel = document.getElementById('visionWalletSelect');
         sel.innerHTML = '<option value="">اختاري أي محفظة من الـ 24...</option>';
-        // عرض جميع المحافظ الـ 24 دون استثناء
         wallets.forEach(w => { sel.innerHTML += `<option value="${w.id}">${w.name} (${w.balance} ر.س)</option>`; });
         openModal('visionModal');
     }
@@ -1489,7 +1484,6 @@
         if (!wId) { showAlert("الرجاء اختيار المحفظة المرتبطة!", "error"); return; }
 
         if (editId) {
-            // تعديل هدف موجود
             const goal = visionGoals.find(g => g.id == editId);
             if(goal) {
                 goal.walletId = wId;
@@ -1505,7 +1499,6 @@
                 saveData(); closeModal('visionModal'); showAlert("تم تعديل الهدف بنجاح!");
             }
         } else {
-            // إضافة هدف جديد
             if (!file) { showAlert("الرجاء اختيار الصورة!", "error"); return; }
             const reader = new FileReader();
             reader.onload = function(e) {
