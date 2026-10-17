@@ -596,15 +596,16 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    // استدعاء البيانات بأمان ودون مسح أو تصفير للسابقة
-    let wallets = JSON.parse(localStorage.getItem('haseen_wallets')) || [];
-    if(wallets.length === 0) {
+    // استرجاع البيانات بأمان تام (إذا لم توجد بيانات سابقة فقط نضع القيم الافتراضية، ولن يتم مسح أي بيانات موجودة أبداً)
+    let wallets = JSON.parse(localStorage.getItem('haseen_wallets'));
+    if(!wallets || wallets.length === 0) {
         wallets = [
             { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
             { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
             { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
             { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
         ];
+        localStorage.setItem('haseen_wallets', JSON.stringify(wallets));
     }
 
     let incomes = JSON.parse(localStorage.getItem('haseen_incomes')) || [];
@@ -709,7 +710,6 @@
         const totalIncomeThisMonth = incomes.reduce((acc, inc) => acc + inc.amount, 0);
         const goalPct = Math.min(100, Math.floor((totalIncomeThisMonth / 5000) * 100));
         document.getElementById('incomeGoalBar').style.width = goalPct + '%';
-        document.getElementById('incomeGoalStatus').innerText = `محقق: ${totalIncomeThisMonth.toLocaleString('ar-SA')} من 5,000 ر.س`;
     }
 
     function calcRunway() {
@@ -867,12 +867,7 @@
         incomes.unshift({ amount: net, channel: channel, reason: rsn + (reinvestAmount>0 ? ` (تم اقتطاع ${reinvestAmount} ر.س لتطوير الأعمال)` : ''), date: new Date().toLocaleDateString('ar-SA') });
         saveData(); renderIncomes(); renderWallets(currentBank);
         document.getElementById('inc-gross').value = ''; document.getElementById('inc-cost').value = ''; document.getElementById('inc-reason').value = '';
-        
-        if(reinvestAmount > 0) {
-            showAlert(`تم حفظ الربح الصافي وتخصيص ${reinvestAmount} ر.س تلقائياً لتطوير أعمالك 🌱!`);
-        } else {
-            showAlert(`تم تسجيل صافي الربح (${net} ر.س) بنجاح! شطورة يا لمار 👏✨`);
-        }
+        showAlert(`تم تسجيل صافي الربح (${net} ر.س) بنجاح! شطورة يا لمار 👏✨`);
     }
 
     function addMonthlyExpense() {
@@ -1350,8 +1345,9 @@
                 if (data.wishlist) wishlist = data.wishlist;
                 if (data.ideas) ideas = data.ideas;
                 if (data.transactionsLog) transactionsLog = data.transactionsLog;
-                saveData(); showAlert("تم استرجاع بياناتك بنجاح!");
-            } catch (err) { showAlert("ملف غير صالح!", "error"); }
+                saveData(); initApp();
+                showAlert("تم استرجاع بياناتك ومحافظك وسجلاتك بنجاح تامة! ✨");
+            } catch (err) { showAlert("ملف النسخة الاحتياطية غير صالح!", "error"); }
         };
         reader.readAsText(file);
     }
