@@ -35,4 +35,1098 @@
             background: radial-gradient(circle at top right, var(--mid-green), var(--royal-green));
             display: flex;
             align-items: center;
-            justify-content
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #loginScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.98);
+            width: 100%;
+            max-width: 430px;
+            padding: 40px 32px;
+            border-radius: 24px;
+            border: 2px solid var(--gold);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            text-align: center;
+        }
+        .login-logo {
+            width: 72px;
+            height: 72px;
+            background: var(--royal-green);
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.9rem;
+            font-weight: 900;
+            margin-bottom: 18px;
+        }
+        .login-card h1 { color: var(--royal-green); font-size: 1.6rem; font-weight: 900; margin-bottom: 6px; }
+        .login-card p { color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 24px; }
+
+        .form-group { text-align: right; margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--royal-green); margin-bottom: 6px; }
+        .form-group input {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            outline: none;
+            transition: 0.2s;
+            background: var(--bg-main);
+        }
+        .form-group input:focus { border-color: var(--gold); background: var(--surface); }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--royal-green), var(--mid-green));
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: transform 0.15s, box-shadow 0.2s;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(11,37,28,0.25); }
+        .login-error {
+            color: var(--danger);
+            background: var(--danger-soft);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 12px;
+            display: none;
+        }
+        .login-hint { margin-top: 18px; font-size: 0.8rem; color: var(--text-secondary); }
+
+        /* ================= 2. TOP NAVBAR ================= */
+        .navbar {
+            background: var(--royal-green);
+            color: var(--surface);
+            padding: 16px 28px;
+            border-bottom: 3px solid var(--gold);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+        .brand-area { display: flex; align-items: center; gap: 14px; }
+        .brand-icon {
+            width: 42px; height: 42px; border-radius: 11px;
+            background: var(--gold); color: var(--royal-green);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.3rem;
+        }
+        .brand-text h2 { font-size: 1.2rem; font-weight: 800; color: #FFF; }
+        .brand-text span { font-size: 0.8rem; color: var(--gold); display: block; }
+
+        .nav-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .btn-nav {
+            background: rgba(255,255,255,0.08);
+            color: #FFF;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-nav:hover { background: var(--gold); color: var(--royal-green); }
+        .btn-logout { background: rgba(185, 28, 28, 0.25); border-color: #EF4444; color: #FCA5A5; }
+        .btn-logout:hover { background: var(--danger); color: #FFF; }
+
+        /* ================= 3. MAIN CONTAINER & KPI CARDS ================= */
+        .main-wrapper { max-width: 1320px; margin: 28px auto; padding: 0 20px 50px; }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+        .kpi-card {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            border-right: 5px solid var(--royal-green);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .kpi-card.gold-kpi {
+            background: linear-gradient(135deg, var(--royal-green), var(--mid-green));
+            color: #FFF;
+            border-right: 5px solid var(--gold);
+        }
+        .kpi-card .k-label { font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); }
+        .kpi-card.gold-kpi .k-label { color: var(--gold-soft); }
+        .kpi-card .k-val { font-size: 1.55rem; font-weight: 900; color: var(--royal-green); margin-top: 6px; }
+        .kpi-card.gold-kpi .k-val { color: var(--gold); font-size: 1.75rem; }
+        .kpi-card .k-sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
+        .kpi-card.gold-kpi .k-sub { color: #D1D5DB; }
+
+        /* ================= 4. INTERACTIVE INCOME SPLITTER ================= */
+        .splitter-box {
+            background: var(--surface);
+            border: 2px solid var(--gold);
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow);
+        }
+        .splitter-head {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+        .splitter-head h3 { color: var(--royal-green); font-size: 1.25rem; font-weight: 800; }
+        .splitter-head p { color: var(--text-secondary); font-size: 0.88rem; }
+
+        .splitter-input-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .splitter-input-bar input {
+            padding: 11px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            width: 220px;
+            color: var(--royal-green);
+        }
+        .btn-gold {
+            background: var(--gold);
+            color: var(--royal-green);
+            border: none;
+            padding: 11px 18px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-gold:hover { background: var(--gold-hover); }
+
+        .split-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+            gap: 12px;
+        }
+        .sp-card {
+            background: var(--gold-soft);
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .sp-card small { font-size: 0.78rem; font-weight: 700; color: var(--mid-green); display: block; }
+        .sp-card strong { font-size: 0.95rem; color: var(--royal-green); display: block; margin: 3px 0; }
+        .sp-card span { font-size: 1.25rem; font-weight: 900; color: var(--gold-hover); }
+
+        /* ================= 5. FILTER TABS ================= */
+        .tabs-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 14px;
+        }
+        .tab-btn {
+            background: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--royal-green);
+            color: var(--gold);
+            border-color: var(--gold);
+            box-shadow: 0 4px 12px rgba(11, 37, 28, 0.18);
+        }
+
+        /* ================= 6. BANK SECTIONS & WALLETS ================= */
+        .bank-block { margin-bottom: 42px; }
+        .bank-banner {
+            background: linear-gradient(135deg, var(--royal-green), var(--mid-green));
+            color: #FFF;
+            padding: 18px 24px;
+            border-radius: 16px;
+            border-right: 6px solid var(--gold);
+            margin-bottom: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .bank-banner h2 { font-size: 1.3rem; font-weight: 800; color: #FFF; }
+        .bank-banner p { font-size: 0.86rem; color: var(--gold-soft); opacity: 0.92; }
+        .bank-banner-total {
+            background: rgba(255,255,255,0.12);
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--gold);
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .wallets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(365px, 1fr));
+            gap: 20px;
+        }
+        .w-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.15s;
+        }
+        .w-card:hover { transform: translateY(-2px); }
+        .w-card.sacred-border { border: 2px solid var(--danger); }
+
+        .w-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+        .w-title { font-size: 1.12rem; font-weight: 800; color: var(--royal-green); }
+        .w-cap-badge {
+            background: var(--gold-soft);
+            color: var(--royal-green);
+            border: 1px solid var(--gold);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .w-desc { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5; }
+
+        .w-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+        .w-tag {
+            background: var(--soft-green);
+            color: var(--royal-green);
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .w-stats {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .stat-box small { font-size: 0.72rem; color: var(--text-secondary); display: block; }
+        .stat-box strong { font-size: 1.1rem; font-weight: 900; color: var(--royal-green); }
+        .stat-box.spent strong { color: var(--danger); }
+
+        .prog-bar {
+            width: 100%; height: 8px; background: #E5E7EB;
+            border-radius: 8px; overflow: hidden; margin-bottom: 10px;
+        }
+        .prog-fill { height: 100%; background: var(--mid-green); transition: width 0.3s; }
+        .prog-fill.gold { background: var(--gold); }
+        .prog-fill.red { background: var(--danger); }
+
+        .rule-banner {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .rule-banner.stop { background: var(--success-soft); color: var(--success); }
+        .rule-banner.warn { background: var(--danger-soft); color: var(--danger); }
+
+        .w-controls {
+            border-top: 1px dashed var(--border);
+            padding-top: 12px;
+        }
+        .ctrl-row {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .ctrl-row input, .ctrl-row select, .note-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .note-input { margin-bottom: 8px; }
+
+        .btn-group { display: flex; gap: 8px; }
+        .btn-tx {
+            flex: 1;
+            padding: 9px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 800;
+            font-size: 0.86rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-in { background: var(--royal-green); color: #FFF; }
+        .btn-in:disabled { background: #CCC; cursor: not-allowed; }
+        .btn-out { background: var(--danger-soft); color: var(--danger); border: 1px solid #FCA5A5; }
+
+        .mini-logs {
+            margin-top: 10px;
+            max-height: 115px;
+            overflow-y: auto;
+            border-top: 1px solid #F0EFEA;
+            padding-top: 6px;
+            font-size: 0.78rem;
+        }
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dotted #E5E7EB;
+        }
+        .log-item.in { color: var(--success); }
+        .log-item.out { color: var(--danger); }
+
+        /* Global Log Table */
+        .global-log-box {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: none;
+        }
+        .global-log-box.active { display: block; }
+        .log-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .log-table th { background: var(--royal-green); color: #FFF; padding: 12px; text-align: right; font-size: 0.9rem; }
+        .log-table td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+
+        /* Password Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-card {
+            background: var(--surface); padding: 28px; border-radius: 18px;
+            width: 100%; max-width: 400px; border: 2px solid var(--gold);
+        }
+
+        @media (max-width: 640px) {
+            .wallets-grid { grid-template-columns: 1fr; }
+            .ctrl-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================= 1. شاشة تسجيل الدخول ================= -->
+<div id="loginScreen">
+    <div class="login-card">
+        <div class="login-logo">ل</div>
+        <h1>بوابة لمار المالية</h1>
+        <p>نظام خاص لإدارة الثروة، المشاريع، والمحافظ الـ 24</p>
+
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>اسم المستخدمة</label>
+                <input type="text" id="usernameInput" value="لمار خالد الحربي" readonly>
+            </div>
+            <div class="form-group">
+                <label>رمز المرور السري (PIN / Password)</label>
+                <input type="password" id="passwordInput" placeholder="أدخلي رمز المرور..." autofocus required>
+            </div>
+            <button type="submit" class="btn-login">تسجيل الدخول لعرض بياناتي 🔒</button>
+            <div class="login-error" id="loginError">رمز المرور غير صحيح! حاولي مرة أخرى.</div>
+        </form>
+        <div class="login-hint">الرمز الافتراضي لأول دخول: <strong>1234</strong> (يمكنكِ تغييره من الداخل)</div>
+    </div>
+</div>
+
+<!-- ================= 2. شريط التنقل العلوي ================= -->
+<nav class="navbar">
+    <div class="brand-area">
+        <div class="brand-icon">ل</div>
+        <div class="brand-text">
+            <h2>المحفظة المالية والأعمال - لمار</h2>
+            <span>الراجحي • الإنماء • D360 • برق</span>
+        </div>
+    </div>
+    <div class="nav-actions">
+        <button class="btn-nav" onclick="openPinModal()">🔑 تغيير رمز الدخول</button>
+        <button class="btn-nav" onclick="exportBackup()">📥 حفظ نسخة احتياطية</button>
+        <button class="btn-nav" onclick="document.getElementById('importFile').click()">📤 استرجاع نسخة</button>
+        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
+        <button class="btn-nav btn-logout" onclick="logout()">🔒 قفل الشاشة والخروج</button>
+    </div>
+</nav>
+
+<!-- ================= 3. المحتوى الرئيسي ================= -->
+<div class="main-wrapper">
+
+    <!-- بطاقات الملخص المالي الأربعة + الإجمالي -->
+    <div class="kpi-grid">
+        <div class="kpi-card gold-kpi">
+            <span class="k-label">إجمالي السيولة والثروة (كل البنوك)</span>
+            <div class="k-val" id="kpi-grand">0 ر.س</div>
+            <span class="k-sub">مجموع الأرصدة الحالية في الـ 24 محفظة</span>
+        </div>
+        <div class="kpi-card">
+            <span class="k-label">💼 مصرف الراجحي (6 حصّالات)</span>
+            <div class="k-val" id="kpi-rajhi">0 ر.س</div>
+            <span class="k-sub">الصدقات، الأعياد، رمضان، ورأس مال البزنس</span>
+        </div>
+        <div class="kpi-card">
+            <span class="k-label">🔒 مصرف الإنماء (6 حسابات)</span>
+            <div class="k-val" id="kpi-inma">0 ر.س</div>
+            <span class="k-sub">الطوارئ، الأسنان، الذهب، السيارة، والسكن</span>
+        </div>
+        <div class="kpi-card">
+            <span class="k-label">💳 تطبيق D360 (10 محافظ)</span>
+            <div class="k-val" id="kpi-d360">0 ر.س</div>
+            <span class="k-sub">الصرف اليومي، العناية، الجامعة، والنفسية</span>
+        </div>
+        <div class="kpi-card">
+            <span class="k-label">⚡ تطبيق برق (محفظتان)</span>
+            <div class="k-val" id="kpi-barq">0 ر.س</div>
+            <span class="k-sub">رصيد أوبر (200+) والفواتير والاشتراكات</span>
+        </div>
+    </div>
+
+    <!-- حاسبة توزيع الدخل التفاعلية -->
+    <div class="splitter-box">
+        <div class="splitter-head">
+            <div>
+                <h3>حاسبة توزيع الدخل الذكية (عند نزول أي مبلغ في الراجحي)</h3>
+                <p>اكتبي المبلغ المستلم من العميل أو المشروع، واضغطي "إيداع الـ 10% صدقات" ليتم توثيقها فوراً:</p>
+            </div>
+            <div class="splitter-input-bar">
+                <input type="number" id="splitInput" value="5000" oninput="updateSplitter()">
+                <button class="btn-gold" onclick="depositCharityFromSplitter()">+ إيداع 10% في الصدقات العامة فوراً</button>
+            </div>
+        </div>
+        <div class="split-cards">
+            <div class="sp-card">
+                <small>10% فورية من المصدر</small>
+                <strong>الصدقات العامة (الراجحي)</strong>
+                <span id="sp-10">500 ر.س</span>
+            </div>
+            <div class="sp-card">
+                <small>30% استثمار طويل وأمان</small>
+                <strong>تُحوّل إلى مصرف الإنماء</strong>
+                <span id="sp-30">1,500 ر.س</span>
+            </div>
+            <div class="sp-card">
+                <small>25% مواسم مقدسة وبزنس</small>
+                <strong>تبقى في حصّالات الراجحي</strong>
+                <span id="sp-25-r">1,250 ر.س</span>
+            </div>
+            <div class="sp-card">
+                <small>25% معيشة وعناية ودراسة</small>
+                <strong>تُحوّل إلى تطبيق D360</strong>
+                <span id="sp-25-d">1,250 ر.س</span>
+            </div>
+            <div class="sp-card">
+                <small>10% مواصلات والتزامات</small>
+                <strong>تُحوّل إلى تطبيق برق</strong>
+                <span id="sp-10-b">500 ر.س</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- شريط التبويبات للفلترة السريعة -->
+    <div class="tabs-bar">
+        <button class="tab-btn active" onclick="filterBank('all', this)">عرض كل البنوك والمحافظ (24)</button>
+        <button class="tab-btn" onclick="filterBank('rajhi', this)">💼 مصرف الراجحي (6)</button>
+        <button class="tab-btn" onclick="filterBank('inma', this)">🔒 مصرف الإنماء (6)</button>
+        <button class="tab-btn" onclick="filterBank('d360', this)">💳 تطبيق D360 (10)</button>
+        <button class="tab-btn" onclick="filterBank('barq', this)">⚡ تطبيق برق (2)</button>
+        <button class="tab-btn" onclick="filterBank('logs', this)">📜 السجل العام لجميع الحركات</button>
+    </div>
+
+    <!-- حاوية البنوك والمحافظ -->
+    <div id="banksView"></div>
+
+    <!-- حاوية السجل العام -->
+    <div class="global-log-box" id="globalLogsView">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="color:var(--royal-green);">📜 السجل التاريخي الشامل لكل عمليات الإيداع والصرف</h3>
+            <button class="btn-nav" style="color:var(--danger); border-color:var(--danger);" onclick="resetAll()">تصفير جميع البيانات</button>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>البنك</th>
+                        <th>المحفظة</th>
+                        <th>النوع</th>
+                        <th>التصنيف الفرعي والملاحظة</th>
+                        <th>المبلغ</th>
+                    </tr>
+                </thead>
+                <tbody id="globalLogsBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- نافذة تغيير الرقم السري -->
+<div class="modal-overlay" id="pinModal">
+    <div class="modal-card">
+        <h3 style="color:var(--royal-green); margin-bottom:12px;">تغيير رمز الدخول السري</h3>
+        <div class="form-group">
+            <label>أدخلي الرمز السري الجديد:</label>
+            <input type="password" id="newPinInput" placeholder="كتابة الرمز الجديد...">
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-gold" style="flex:1;" onclick="saveNewPin()">حفظ الرمز</button>
+            <button class="btn-nav" style="flex:1; color:var(--text-primary);" onclick="closePinModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // البيانات الأساسية للـ 24 محفظة بالملّي
+    const initialWallets = [
+        // 1. مصرف الراجحي
+        {
+            id: "r1", bank: "rajhi", name: "1. محفظة الصدقات العامة (10%)",
+            cap: 0, capText: "10% من كل دخل", balance: 0, spent: 0, rule: "none",
+            desc: "تُقتطع فوراً من أي دخل مهما كان المبلغ كبيراً، وتُصرف في أوجه الخير طوال العام (مستقلة عن رمضان).",
+            subs: ["صدقة جارية/يومية", "تفريج كربة", "إطعام وسقيا"], logs: []
+        },
+        {
+            id: "r2", bank: "rajhi", name: "2. محفظة إفطار صائم (رمضان)",
+            cap: 5000, capText: "المستهدف: 5,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "زيادة فوق الـ 10%؛ تتجمع طوال السنة لدعم أهلك في مشروع إفطار صائم برمضان لتوسيع السفرة.",
+            subs: ["دعم إفطار صائم مع الأهل", "تفطير صائمين"], logs: []
+        },
+        {
+            id: "r3", bank: "rajhi", name: "3. محفظة الأعياد المقدسة 🔒",
+            cap: 5000, capText: "سقف ثابت: 5,000 ر.س", balance: 0, spent: 0, rule: "sacred",
+            desc: "خط أحمر! مفصولة تماماً عن الكشخة اليومية، موجودة على طول ولا يُصرف منها ريال واحد خارج العيد.",
+            subs: ["ملابس وكشخة عيد الفطر", "ملابس وكشخة عيد الأضحى", "تجهيزات العيد"], logs: []
+        },
+        {
+            id: "r4", bank: "rajhi", name: "4. حساب رأس مال البزنس (Business Capital)",
+            cap: 0, capText: "مفتوح (نسبة أرباح)", balance: 0, spent: 0, rule: "none",
+            desc: "مخصص لتمويل مشاريعك (العود والسبح، التغليف، شراء العينات، تطوير المتاجر، والإعلانات).",
+            subs: ["بضاعة عود وسبح", "علب وتغليف وهدايا", "عينات وتجارب", "إعلانات وتسويق"], logs: []
+        },
+        {
+            id: "r5", bank: "rajhi", name: "5. محفظة صيانة وتحديث الأجهزة",
+            cap: 2000, capText: "السقف: 2,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "لصيانة أو ترقية اللابتوب والجوال اللذين يعتمد عليهما عملك الحر في البرمجة والتصميم.",
+            subs: ["صيانة لابتوب", "صيانة جوال", "ملحقات تقنية للعمل"], logs: []
+        },
+        {
+            id: "r6", bank: "rajhi", name: "6. محفظة الإجازات والرحلات العائلية",
+            cap: 0, capText: "تجميع عائلي مفتوح", balance: 0, spent: 0, rule: "none",
+            desc: "مخصصة لكل العائلة (وليست لكِ وحدك) للمساهمة في السفرات، الشاليهات، والطلعات الجماعية.",
+            subs: ["سفرة عائلية", "حجز شاليه/استراحة", "طلعة عائلية"], logs: []
+        },
+
+        // 2. مصرف الإنماء
+        {
+            id: "i1", bank: "inma", name: "7. صندوق الطوارئ الشخصي (3-6 أشهر)",
+            cap: 15000, capText: "الهدف: 15,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "يُربط في حساب نماء/مرابحة ليزيد بعوائد شرعية. لا يُلمس لأكثر من سنة إلا لو صار ظرف طارئ لا سمح الله.",
+            subs: ["إيداع حساب نماء/مرابحة", "ظرف طارئ قاهر"], logs: []
+        },
+        {
+            id: "i2", bank: "inma", name: "8. محفظة الأسنان والطوارئ الصحية (خاص)",
+            cap: 7000, capText: "الهدف: 7,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "العلاج الحكومي مجاني، لكن هذه المحفظة مخصصة لعيادات الأسنان الخاصة لأن أسنانك تعاني وتحتاج علاجاً سريعاً.",
+            subs: ["علاج عصب وحشوات", "تنظيف ومتابعة أسنان", "تقويم/تجميل أسنان"], logs: []
+        },
+        {
+            id: "i3", bank: "inma", name: "9. محفظة الذهب والاستثمار التراكمي",
+            cap: 3000, capText: "نقطة الشراء: 3,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "تُضاف لها نسبة مئوية شهرياً، وإذا تجمع مبلغ كبير (2,500 - 3,000 ريال) تشترين به سبيكة ذهب صافي.",
+            subs: ["شراء سبيكة ذهب", "استثمار طويل الأمد"], logs: []
+        },
+        {
+            id: "i4", bank: "inma", name: "10. محفظة تجميع السيارة",
+            cap: 60000, capText: "الهدف: 60,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "ادخار طويل المدى في حساب نماء (لا يُحرك لأكثر من سنة) لتجميع قيمة السيارة.",
+            subs: ["دفعة ادخار السيارة"], logs: []
+        },
+        {
+            id: "i5", bank: "inma", name: "11. محفظة السكن وتجهيز الأثاث",
+            cap: 5000, capText: "الهدف: 5,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "مخصصة للسكن الحالي لشراء القطع الأساسية الكبيرة (سرير، دولاب، مرتبة، وتجهيزات الغرفة).",
+            subs: ["شراء سرير", "شراء دولاب", "تجهيزات وأثاث السكن"], logs: []
+        },
+        {
+            id: "i6", bank: "inma", name: "12. محفظة مساعدة الأسرة (طوارئ الأهل)",
+            cap: 5000, capText: "السقف: 5,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "رصيد أمان مخصص للأسرة؛ لو صار للأهل أي ظرف مالي طارئ تقدرين تساعدينهم فوراً.",
+            subs: ["مساعدة طارئة للأهل"], logs: []
+        },
+
+        // 3. تطبيق D360
+        {
+            id: "d1", bank: "d360", name: "13. التسوق الشخصي والكشخة اليومية",
+            cap: 1000, capText: "الميزانية: 1,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "للملابس العادية، العبايات، والكشخة اليومية على مدار السنة (مفصولة عن محفظة الأعياد).",
+            subs: ["ملابس وخرجات", "عبايات", "شنط وإكسسوارات"], logs: []
+        },
+        {
+            id: "d2", bank: "d360", name: "14. محفظة الهدايا والاحتفالات 🛑",
+            cap: 2000, capText: "سقف متوقف: 2,000 ر.س", balance: 0, spent: 0, rule: "cap2000",
+            desc: "شرط صارم: إذا وصلت 2,000 ريال ما تزيد ولا ريال لين تستخدمينها، وتُعوض فقط بمقدار ما صُرف منها.",
+            subs: ["شراء هدية", "تنسيق ورد/حفلة", "مشاركة احتفال"], logs: []
+        },
+        {
+            id: "d3", bank: "d360", name: "15. محفظة العناية والجمال (مدمجة بـ 3 فروع)",
+            cap: 900, capText: "الميزانية: 900 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "محفظة واحدة في التطبيق ومربوط تحتها الـ 3 أقسام لتحددي بالملّي على أي قسم صرفتِ المبلغ.",
+            subs: ["قسم السكين كير (Skincare)", "قسم المكياج (Makeup)", "قسم العطور (Perfumes)"], logs: []
+        },
+        {
+            id: "d4", bank: "d360", name: "16. محفظة العلاج النفسي والاستشارات",
+            cap: 1000, capText: "الميزانية: 1,000 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "مخصصة لجلسات العلاج والدعم النفسي لتفريغ الضغط والحفاظ على توازنكِ النفسي.",
+            subs: ["جلسة علاج نفسي", "استشارة نفسية"], logs: []
+        },
+        {
+            id: "d5", bank: "d360", name: "17. اختبارات إعادة القبول الجامعي وتطوير الذات",
+            cap: 1500, capText: "الميزانية: 1,500 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "لاختبارات إعادة دخول الجامعة، شراء الكتب والدورات التأهيلية، بالإضافة لدورات التسويق والتصميم.",
+            subs: ["دورة اختبارات الجامعة", "كتب وملازم الاختبارات", "رسوم اختبار", "دورة تطوير ذات/تسويق"], logs: []
+        },
+        {
+            id: "d6", bank: "d360", name: "18. الترفيه، الكتب، الهوايات، ومكافآت المذاكرة",
+            cap: 600, capText: "الميزانية: 600 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "لتخفيف ضغط فترة الاختبارات: قراءة الكتب، خامات البدزلة (راين و B-7000)، ومكافآت الإنجاز.",
+            subs: ["شراء كتب وروايات", "خامات البدزلة و B-7000", "مكافأة بعد المذاكرة"], logs: []
+        },
+        {
+            id: "d7", bank: "d360", name: "19. حساب الأكل والمطاعم",
+            cap: 800, capText: "الميزانية: 800 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "ميزانية شهرية محددة للطلبات الخارجية والمطاعم.",
+            subs: ["طلب مطعم", "وجبة خارجية"], logs: []
+        },
+        {
+            id: "d8", bank: "d360", name: "20. حساب القهوة والماتشا",
+            cap: 450, capText: "الميزانية: 450 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "مخصص لمشروباتك المفضلة ومستلزماتها (V60، الماتشا، الفريدو إسبريسو، والكافيهات).",
+            subs: ["محاصيل وأدوات V60", "ماتشا وفريدو إسبريسو", "كوب قهوة من كافيه"], logs: []
+        },
+        {
+            id: "d9", bank: "d360", name: "21. محفظة الرغبات (لو أبي أشتري شي خاطري فيه)",
+            cap: 0, capText: "حصّالة مرنة", balance: 0, spent: 0, rule: "none",
+            desc: "حصّالة مرنة لتجميع مبلغ أي غرض يجي بخاطركِ فجأة دون إرباك باقي الميزانيات.",
+            subs: ["شراء غرض خاطري فيه"], logs: []
+        },
+        {
+            id: "d10", bank: "d360", name: "22. محفظة الطوارئ النثرية اليومية",
+            cap: 200, capText: "الاحتياطي: 200 ر.س", balance: 0, spent: 0, rule: "target",
+            desc: "للمفاجآت اليومية الصغيرة جداً (رسوم توصيل طارئة، غرض بسيط من الصيدلية أو البقالة).",
+            subs: ["توصيل طارئ", "نواقص صيدلية/بقالة"], logs: []
+        },
+
+        // 4. تطبيق برق
+        {
+            id: "b1", bank: "barq", name: "23. حساب أوبر (المواصلات) 🚕",
+            cap: 200, capText: "شرط إلزامي: 200 ر.س حد أدنى", balance: 200, spent: 0, rule: "min200",
+            desc: "لازم يتوفر فيه 200 ريال كحد أدنى دائماً لتأمين مشاويركِ وتنقلاتكِ في كل الأوقات.",
+            subs: ["مشوار أوبر للجامعة/العمل", "مشوار خاص"], logs: []
+        },
+        {
+            id: "b2", bank: "barq", name: "24. حساب النت، النادي، والاشتراكات الثابتة",
+            cap: 750, capText: "الالتزامات الشهرية", balance: 0, spent: 0, rule: "target",
+            desc: "معزولة في تطبيق برق لتنسحب تلقائياً: (فاتورة النت + اشتراك النادي + اشتراكات التصميم وNotion).",
+            subs: ["فاتورة النت والجوال", "اشتراك النادي الرياضي", "اشتراكات البرامج والمنصات"], logs: []
+        }
+    ];
+
+    const bankDetails = {
+        rajhi: {
+            title: "أولاً: مصرف الراجحي (بوابة الاستقبال، البركة، المقدسات، والبزنس)",
+            desc: "ينزل فيه الدخل • بدون بطاقة صراف في محفظتك • تفتحين داخله هذه الـ 6 حصّالات الفرعية"
+        },
+        inma: {
+            title: "ثانياً: مصرف الإنماء (الخزنة، الأمان، والاستثمار طويل المدى لأكثر من سنة)",
+            desc: "تُربط فيه المبالغ في حساب نماء وودائع المرابحة لتزيد بعوائد شرعية • تفتحين داخله هذه الـ 6 حسابات الفرعية"
+        },
+        d360: {
+            title: "ثالثاً: تطبيق D360 (بطاقة مدى اليومية، الدراسة، النفسية، والعناية)",
+            desc: "تطبيق الصرف اليومي الأساسي • تفتحين داخله هذه الـ 10 محافظ مع تتبع الفروع المدمجة بالملّي"
+        },
+        barq: {
+            title: "رابعاً: تطبيق برق - Barq (مخصص للمواصلات والالتزامات الثابتة فقط)",
+            desc: "معزول ببطاقة افتراضية مربوطة بتطبيق أوبر والفواتير الشهرية • يحتوي على هاتين المحفظتين"
+        }
+    };
+
+    let stateWallets = JSON.parse(localStorage.getItem('lamar_wealth_os_v2')) || initialWallets;
+    let currentFilter = 'all';
+
+    // ================= إدارة تسجيل الدخول =================
+    function getSavedPin() {
+        return localStorage.getItem('lamar_pin_code') || '1234';
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const entered = document.getElementById('passwordInput').value;
+        if (entered === getSavedPin()) {
+            sessionStorage.setItem('lamar_logged_in', 'true');
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    }
+
+    function logout() {
+        sessionStorage.removeItem('lamar_logged_in');
+        document.getElementById('loginScreen').classList.remove('hidden');
+    }
+
+    function openPinModal() { document.getElementById('pinModal').classList.add('show'); }
+    function closePinModal() { document.getElementById('pinModal').classList.remove('show'); }
+    function saveNewPin() {
+        const newPin = document.getElementById('newPinInput').value.trim();
+        if (newPin.length < 3) { alert('الرجاء اختيار رمز لا يقل عن 3 خانات.'); return; }
+        localStorage.setItem('lamar_pin_code', newPin);
+        closePinModal();
+        alert('تم تحديث رمز الدخول السري بنجاح!');
+    }
+
+    // ================= حفظ وعرض البيانات =================
+    function saveData() {
+        localStorage.setItem('lamar_wealth_os_v2', JSON.stringify(stateWallets));
+        renderDashboard();
+    }
+
+    function renderDashboard() {
+        const container = document.getElementById('banksView');
+        container.innerHTML = '';
+
+        let sums = { rajhi: 0, inma: 0, d360: 0, barq: 0, grand: 0 };
+        stateWallets.forEach(w => {
+            sums[w.bank] += w.balance;
+            sums.grand += w.balance;
+        });
+
+        document.getElementById('kpi-grand').innerText = sums.grand.toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('kpi-rajhi').innerText = sums.rajhi.toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('kpi-inma').innerText = sums.inma.toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('kpi-d360').innerText = sums.d360.toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('kpi-barq').innerText = sums.barq.toLocaleString('ar-SA') + ' ر.س';
+
+        if (currentFilter === 'logs') {
+            container.style.display = 'none';
+            document.getElementById('globalLogsView').classList.add('active');
+            renderGlobalLogs();
+            return;
+        } else {
+            container.style.display = 'block';
+            document.getElementById('globalLogsView').classList.remove('active');
+        }
+
+        const banksToShow = currentFilter === 'all' ? ['rajhi', 'inma', 'd360', 'barq'] : [currentFilter];
+
+        banksToShow.forEach(bKey => {
+            const bWallets = stateWallets.filter(w => w.bank === bKey);
+            const block = document.createElement('div');
+            block.className = 'bank-block';
+
+            block.innerHTML = `
+                <div class="bank-banner">
+                    <div>
+                        <h2>${bankDetails[bKey].title}</h2>
+                        <p>${bankDetails[bKey].desc}</p>
+                    </div>
+                    <div class="bank-banner-total">إجمالي البنك: ${sums[bKey].toLocaleString('ar-SA')} ر.س</div>
+                </div>
+                <div class="wallets-grid" id="wgrid-${bKey}"></div>
+            `;
+            container.appendChild(block);
+
+            const grid = block.querySelector(`#wgrid-${bKey}`);
+
+            bWallets.forEach(w => {
+                let pct = w.cap > 0 ? Math.min(100, Math.round((w.balance / w.cap) * 100)) : 100;
+                let disableAdd = false;
+                let bannerHtml = '';
+
+                if (w.rule === 'cap2000' && w.balance >= 2000) {
+                    disableAdd = true;
+                    bannerHtml = `<div class="rule-banner stop">🛑 وصلت لسقف 2,000 ريال! متوقف عن الزيادة حتى تصرفي منها.</div>`;
+                } else if (w.rule === 'sacred') {
+                    bannerHtml = `<div class="rule-banner warn">🔒 محفظة مقدسة: لا يُصرف منها ريال واحد خارج موسم العيد!</div>`;
+                } else if (w.rule === 'min200' && w.balance < 200) {
+                    bannerHtml = `<div class="rule-banner warn">⚠️ تنبيه: رصيد أوبر نزل عن 200 ريال! اشحنيه فوراً.</div>`;
+                }
+
+                const tagsHtml = w.subs.map(s => `<span class="w-tag">${s}</span>`).join('');
+                const optionsHtml = w.subs.map(s => `<option value="${s}">${s}</option>`).join('');
+                const logsHtml = w.logs.slice(0, 4).map(l => `
+                    <div class="log-item ${l.type}">
+                        <span>${l.type === 'in' ? '➕ إيداع:' : '➖ صرف:'} <strong>${l.sub}</strong> ${l.note ? '('+l.note+')' : ''}</span>
+                        <span>${l.amount.toLocaleString('ar-SA')} ر.س • ${l.date}</span>
+                    </div>
+                `).join('');
+
+                const card = document.createElement('div');
+                card.className = `w-card ${w.rule === 'sacred' ? 'sacred-border' : ''}`;
+                card.innerHTML = `
+                    <div>
+                        <div class="w-head">
+                            <div class="w-title">${w.name}</div>
+                            <span class="w-cap-badge" title="اضغطي لتعديل السقف المستهدف" onclick="editCap('${w.id}')">⚙️ ${w.capText}</span>
+                        </div>
+                        <p class="w-desc">${w.desc}</p>
+                        <div class="w-tags">${tagsHtml}</div>
+
+                        <div class="w-stats">
+                            <div class="stat-box">
+                                <small>الرصيد الحالي</small>
+                                <strong>${w.balance.toLocaleString('ar-SA')} ر.س</strong>
+                            </div>
+                            <div class="stat-box spent">
+                                <small>إجمالي المصروف</small>
+                                <strong>${w.spent.toLocaleString('ar-SA')} ر.س</strong>
+                            </div>
+                            <div class="stat-box">
+                                <small>المتبقي للسقف</small>
+                                <strong>${w.cap > 0 ? Math.max(0, w.cap - w.balance).toLocaleString('ar-SA') + ' ر.س' : 'مفتوح'}</strong>
+                            </div>
+                        </div>
+
+                        <div class="prog-bar">
+                            <div class="prog-fill ${pct >= 100 ? 'gold' : ''} ${w.rule === 'min200' && w.balance < 200 ? 'red' : ''}" style="width:${pct}%"></div>
+                        </div>
+                        ${bannerHtml}
+                    </div>
+
+                    <div class="w-controls">
+                        <div class="ctrl-row">
+                            <input type="number" id="in-amt-${w.id}" placeholder="المبلغ (ر.س)">
+                            <select id="in-sub-${w.id}">${optionsHtml}</select>
+                        </div>
+                        <input type="text" class="note-input" id="in-note-${w.id}" placeholder="تفاصيل إضافية (في إيش صرفتيه أو من وين دخل؟)...">
+                        <div class="btn-group">
+                            <button class="btn-tx btn-in" onclick="executeTx('${w.id}', 'in')" ${disableAdd ? 'disabled' : ''}>+ إضافة مبلغ</button>
+                            <button class="btn-tx btn-out" onclick="executeTx('${w.id}', 'out')">- صرف / أخذت منها</button>
+                        </div>
+                        ${w.logs.length > 0 ? `<div class="mini-logs">${logsHtml}</div>` : ''}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        });
+    }
+
+    function executeTx(wId, type) {
+        const amtEl = document.getElementById(`in-amt-${wId}`);
+        const subEl = document.getElementById(`in-sub-${wId}`);
+        const noteEl = document.getElementById(`in-note-${wId}`);
+
+        let amount = parseFloat(amtEl.value);
+        if (!amount || amount <= 0) { alert('الرجاء كتابة مبلغ صحيح أكبر من صفر.'); return; }
+
+        const w = stateWallets.find(x => x.id === wId);
+        if (!w) return;
+
+        if (type === 'in' && w.rule === 'cap2000') {
+            if (w.balance + amount > 2000) {
+                const diff = 2000 - w.balance;
+                alert(`تنبيه: محفظة الهدايا سقفها 2,000 ريال فقط ولا تزيد عنه! سيتم إيداع المتبقي للسقف فقط (${diff} ريال).`);
+                amount = diff;
+                if (amount <= 0) return;
+            }
+        }
+
+        if (type === 'out' && w.rule === 'sacred') {
+            if (!confirm('تحذير: هذه محفظة الأعياد المقدسة التي اشترطتِ عدم الصرف منها خارج العيد مهما حدث! هل أنتِ متأكدة من الصرف الآن؟')) return;
+        }
+
+        if (type === 'out' && amount > w.balance) {
+            alert('المبلغ المطلوب سحبه أكبر من الرصيد المتوفر في هذه المحفظة!');
+            return;
+        }
+
+        if (type === 'in') w.balance += amount;
+        else { w.balance -= amount; w.spent += amount; }
+
+        w.logs.unshift({
+            type: type,
+            amount: amount,
+            sub: subEl.value,
+            note: noteEl.value.trim(),
+            date: new Date().toLocaleDateString('ar-SA')
+        });
+
+        saveData();
+    }
+
+    function editCap(wId) {
+        const w = stateWallets.find(x => x.id === wId);
+        if (!w) return;
+        const newCap = prompt(`تعديل السقف المستهدف لـ (${w.name}) بالريال:`, w.cap);
+        if (newCap !== null && !isNaN(parseFloat(newCap))) {
+            w.cap = parseFloat(newCap);
+            w.capText = w.cap > 0 ? `السقف: ${w.cap.toLocaleString('ar-SA')} ر.س` : 'مفتوح';
+            saveData();
+        }
+    }
+
+    function filterBank(filterKey, btn) {
+        currentFilter = filterKey;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderDashboard();
+    }
+
+    function renderGlobalLogs() {
+        const tbody = document.getElementById('globalLogsBody');
+        tbody.innerHTML = '';
+        let allLogs = [];
+        const bankNames = { rajhi: 'الراجحي', inma: 'الإنماء', d360: 'D360', barq: 'برق' };
+
+        stateWallets.forEach(w => {
+            w.logs.forEach(l => {
+                allLogs.push({ ...l, walletName: w.name, bankName: bankNames[w.bank] });
+            });
+        });
+
+        if (allLogs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">لا توجد حركات مسجلة حتى الآن.</td></tr>`;
+            return;
+        }
+
+        allLogs.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.date}</td>
+                <td><strong>${item.bankName}</strong></td>
+                <td>${item.walletName}</td>
+                <td style="color:${item.type === 'in' ? 'var(--success)' : 'var(--danger)'}; font-weight:800;">
+                    ${item.type === 'in' ? '➕ إيداع' : '➖ صرف'}
+                </td>
+                <td>${item.sub} ${item.note ? ' - ' + item.note : ''}</td>
+                <td style="font-weight:800;">${item.amount.toLocaleString('ar-SA')} ر.س</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ================= حاسبة الدخل والنسخ الاحتياطي =================
+    function updateSplitter() {
+        const v = parseFloat(document.getElementById('splitInput').value) || 0;
+        document.getElementById('sp-10').innerText = (v * 0.10).toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('sp-30').innerText = (v * 0.30).toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('sp-25-r').innerText = (v * 0.25).toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('sp-25-d').innerText = (v * 0.25).toLocaleString('ar-SA') + ' ر.س';
+        document.getElementById('sp-10-b').innerText = (v * 0.10).toLocaleString('ar-SA') + ' ر.س';
+    }
+
+    function depositCharityFromSplitter() {
+        const v = parseFloat(document.getElementById('splitInput').value) || 0;
+        if (v <= 0) return;
+        const cAmt = v * 0.10;
+        const w = stateWallets.find(x => x.id === 'r1');
+        if (w) {
+            w.balance += cAmt;
+            w.logs.unshift({
+                type: 'in', amount: cAmt, sub: 'صدقة جارية/يومية',
+                note: `استقطاع 10% من دخل (${v} ر.س)`, date: new Date().toLocaleDateString('ar-SA')
+            });
+            saveData();
+            alert(`تم إيداع ${cAmt.toLocaleString('ar-SA')} ريال في محفظة الصدقات العامة (10%) بالراجحي بنجاح!`);
+        }
+    }
+
+    function exportBackup() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(stateWallets));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = `lamar_finance_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function importBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (Array.isArray(imported)) {
+                    stateWallets = imported;
+                    saveData();
+                    alert('تم استرجاع النسخة الاحتياطية بنجاح!');
+                }
+            } catch (err) { alert('ملف غير صالح!'); }
+        };
+        reader.readAsText(file);
+    }
+
+    function resetAll() {
+        if (confirm('هل أنتِ متأكدة من تصفير جميع الأرصدة والحركات؟')) {
+            localStorage.removeItem('lamar_wealth_os_v2');
+            stateWallets = JSON.parse(JSON.stringify(initialWallets));
+            renderDashboard();
+        }
+    }
+
+    // التشغيل عند فتح الموقع
+    if (sessionStorage.getItem('lamar_logged_in') === 'true') {
+        document.getElementById('loginScreen').classList.add('hidden');
+    }
+    updateSplitter();
+    renderDashboard();
+</script>
+
+</body>
+</html>
