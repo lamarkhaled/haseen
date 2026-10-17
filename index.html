@@ -267,7 +267,7 @@
         <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:24px;">نظامك المالي المتزامن سحابياً ☁️</p>
         <form onsubmit="handleLogin(event)">
             <div class="form-group"><label>اسم المستخدمة</label><input type="text" value="لمار" readonly style="color:var(--gold-matte);"></div>
-            <div class="form-group"><label>الرمز السري</label><input type="password" id="passwordInput" placeholder="أدخلي الرمز..." autofocus required></div>
+            <div class="form-group"><label>الرمز السري</label><input type="password" id="passwordInput" placeholder="أدخلي الرمز (1234)..." autofocus required></div>
             <button type="submit" class="btn-login">تسجيل الدخول والنظام 🔒</button>
         </form>
     </div>
@@ -690,7 +690,6 @@
                 lastOutDate = data.lastOutDate || new Date().toLocaleDateString('en-CA');
                 sprintGoal = data.sprintGoal || 0;
             } else {
-                // قيم افتراضية أول مرة
                 wallets = [
                     { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
                     { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
@@ -733,7 +732,7 @@
             initApp();
             checkHawlAlerts();
             showAlert("أهلاً بكِ في حصين، لمار!");
-        } else { showAlert("الرمز السري غير صحيح!", "error"); }
+        } else { showAlert("الرمز السري غير صحيح! (الرمز هو 1234)", "error"); }
     }
     
     function logout() {
