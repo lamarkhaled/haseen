@@ -635,7 +635,7 @@
 </div>
 
 <script>
-    // فرض ضبط الرمز السري ليصبح 1234 دائماً وتجنب أي تعليق قديم
+    // فرض ضبط الرمز السري ليصبح 1234 دائماً
     localStorage.setItem('haseen_pin', '1234');
 
     const quotes = [
@@ -681,7 +681,7 @@
     async function loadDataFromCloud() {
         if (window.fbLoadData) {
             const data = await window.fbLoadData();
-            if (data) {
+            if (data && data.wallets && data.wallets.length > 0) {
                 wallets = data.wallets || [];
                 incomes = data.incomes || [];
                 expenses = data.expenses || [];
@@ -693,6 +693,7 @@
                 lastOutDate = data.lastOutDate || new Date().toLocaleDateString('en-CA');
                 sprintGoal = data.sprintGoal || 0;
             } else {
+                // المحافظ الأساسية الأربع الأصلية بدون أي نقصان أو تعديل
                 wallets = [
                     { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
                     { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
@@ -728,7 +729,7 @@
         const savedPin = localStorage.getItem('haseen_pin') || '1234';
         if (pin === savedPin) {
             localStorage.setItem('haseen_logged_in', 'true');
-            showAlert("جاري تحميل بياناتك من السحابة...");
+            showAlert("جاري تحميل بياناتك ومحافظك من السحابة...");
             await loadDataFromCloud();
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
