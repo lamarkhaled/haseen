@@ -6,6 +6,47 @@
     <title>بوابة حصين المالية | لمار</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- مكتبات Firebase السحابية للربط التلقائي -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGq8YblA3odNQG5Q1ehgrnZkLO8N4Su1E",
+            authDomain: "hseen-380d3.firebaseapp.com",
+            databaseURL: "https://hseen-380d3-default-rtdb.firebaseio.com",
+            projectId: "hseen-380d3",
+            storageBucket: "hseen-380d3.firebasestorage.app",
+            messagingSenderId: "455942793027",
+            appId: "1:455942793027:web:592e52a311dcb9a3e671f6",
+            measurementId: "G-PYCRWDWNS7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.fbSaveData = async function(data) {
+            try {
+                await set(ref(db, 'lamar_finance/data'), data);
+            } catch (err) {
+                console.error("خطأ في الحفظ السحابي:", err);
+            }
+        };
+
+        window.fbLoadData = async function() {
+            try {
+                const snapshot = await get(child(ref(db), 'lamar_finance/data'));
+                if (snapshot.exists()) {
+                    return snapshot.val();
+                }
+            } catch (err) {
+                console.error("خطأ في جلب البيانات:", err);
+            }
+            return null;
+        };
+    </script>
+
     <style>
         :root {
             --bg-main: #FDFBF7;
@@ -65,7 +106,6 @@
         }
         .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-        /* تعديل الهيدر للجوال والشاشات الكبيرة ليصبح مرتباً وغير مزعج */
         .navbar {
             background: var(--surface); padding: 12px 20px; border-bottom: 2px solid var(--yellow-haseen);
             display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
@@ -224,11 +264,11 @@
     <div class="login-card">
         <img src="https://files.catbox.moe/kejbz2.png" alt="حصين" class="login-logo">
         <h1 style="font-weight:900; font-size:1.6rem; margin-bottom:5px;">بوابة حصين المالية</h1>
-        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:24px;">نظامك المالي الاحترافي لإدارة الثروة والمشاريع</p>
+        <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:24px;">نظامك المالي المتزامن سحابياً ☁️</p>
         <form onsubmit="handleLogin(event)">
             <div class="form-group"><label>اسم المستخدمة</label><input type="text" value="لمار" readonly style="color:var(--gold-matte);"></div>
             <div class="form-group"><label>الرمز السري</label><input type="password" id="passwordInput" placeholder="أدخلي الرمز..." autofocus required></div>
-            <button type="submit" class="btn-login">تسجيل الدخول النظام 🔒</button>
+            <button type="submit" class="btn-login">تسجيل الدخول والنظام 🔒</button>
         </form>
     </div>
 </div>
@@ -241,10 +281,8 @@
     </div>
     <div class="nav-actions">
         <span style="font-weight:800; color:var(--gold-matte); margin-left:10px; font-size:0.9rem;" id="welcomeText"></span>
+        <button class="btn-nav" onclick="manualSync()" id="syncBtn">🔄 مزامنة سحابية</button>
         <button class="btn-nav" onclick="window.print()">🖨️ طباعة</button>
-        <button class="btn-nav" onclick="exportBackup()">📥 تصدير</button>
-        <button class="btn-nav" onclick="document.getElementById('importFile').click()">📤 استرجاع</button>
-        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
         <button class="btn-nav" onclick="openModal('settingsModal')">إعدادات الرمز ⚙️</button>
         <button class="btn-nav btn-logout" onclick="logout()">قفل الشاشة 🔒</button>
     </div>
@@ -605,26 +643,16 @@
     ];
     document.getElementById('dailyQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
-    let wallets = JSON.parse(localStorage.getItem('haseen_wallets'));
-    if(!wallets || wallets.length === 0) {
-        wallets = [
-            { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
-            { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
-            { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
-            { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
-        ];
-        localStorage.setItem('haseen_wallets', JSON.stringify(wallets));
-    }
-
-    let incomes = JSON.parse(localStorage.getItem('haseen_incomes')) || [];
-    let expenses = JSON.parse(localStorage.getItem('haseen_expenses')) || [];
-    let subscriptions = JSON.parse(localStorage.getItem('haseen_subs')) || [];
-    let visionGoals = JSON.parse(localStorage.getItem('haseen_vision')) || [];
-    let wishlist = JSON.parse(localStorage.getItem('haseen_wishlist')) || [];
-    let ideas = JSON.parse(localStorage.getItem('haseen_ideas')) || ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
-    let transactionsLog = JSON.parse(localStorage.getItem('haseen_tx_log')) || [];
-    let lastOutDate = localStorage.getItem('haseen_last_out') || new Date().toLocaleDateString('en-CA');
-    let sprintGoal = parseFloat(localStorage.getItem('haseen_sprint_goal')) || 0;
+    let wallets = [];
+    let incomes = [];
+    let expenses = [];
+    let subscriptions = [];
+    let visionGoals = [];
+    let wishlist = [];
+    let ideas = [];
+    let transactionsLog = [];
+    let lastOutDate = new Date().toLocaleDateString('en-CA');
+    let sprintGoal = 0;
     let currentBank = 'rajhi';
     let editTargetId = null;
 
@@ -647,17 +675,64 @@
     }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-    function handleLogin(e) {
+    async function loadDataFromCloud() {
+        if (window.fbLoadData) {
+            const data = await window.fbLoadData();
+            if (data) {
+                wallets = data.wallets || [];
+                incomes = data.incomes || [];
+                expenses = data.expenses || [];
+                subscriptions = data.subscriptions || [];
+                visionGoals = data.visionGoals || [];
+                wishlist = data.wishlist || [];
+                ideas = data.ideas || ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
+                transactionsLog = data.transactionsLog || [];
+                lastOutDate = data.lastOutDate || new Date().toLocaleDateString('en-CA');
+                sprintGoal = data.sprintGoal || 0;
+            } else {
+                // قيم افتراضية أول مرة
+                wallets = [
+                    { id: "r1", bank: "rajhi", name: "محفظة الصدقات العامة", coverage: "تشمل الصدقات اليومية وكفالة الأيتام", cap: 0, balance: 0, createdDate: new Date().toISOString() },
+                    { id: "i1", bank: "inma", name: "صندوق الطوارئ", coverage: "يشمل الطوارئ والظروف غير المتوقعة", cap: 15000, balance: 0, createdDate: new Date().toISOString() },
+                    { id: "d1", bank: "d360", name: "الكشخة اليومية", coverage: "تشمل القهوة والترفيه الشخصي", cap: 1000, balance: 0, createdDate: new Date().toISOString() },
+                    { id: "b2", bank: "barq", name: "تطوير وتوسيع الأعمال 🌱", coverage: "مخصصة لإعادة الاستثمار في تطوير الخدمات والاشتراكات", cap: 5000, balance: 0, createdDate: new Date().toISOString() }
+                ];
+                ideas = ["خدمة تصميم قوالب سلة", "قوالب تسويق جاهزة"];
+                saveData();
+            }
+        }
+    }
+
+    async function saveData() {
+        const allData = { wallets, incomes, expenses, subscriptions, visionGoals, wishlist, ideas, transactionsLog, lastOutDate, sprintGoal };
+        if (window.fbSaveData) {
+            await window.fbSaveData(allData);
+        }
+        renderDashboard(); renderVisionBoard(); renderWishlist(); renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); calcStreak(); renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel(); calcRunway();
+    }
+
+    async function manualSync() {
+        const btn = document.getElementById('syncBtn');
+        btn.innerText = "جاري المزامنة...";
+        await loadDataFromCloud();
+        initApp();
+        showAlert("تمت المزامنة مع السحابة بنجاح! ☁️✨");
+        btn.innerText = "🔄 مزامنة سحابية";
+    }
+
+    async function handleLogin(e) {
         e.preventDefault();
         const pin = document.getElementById('passwordInput').value;
         const savedPin = localStorage.getItem('haseen_pin') || '1234';
         if (pin === savedPin) {
             localStorage.setItem('haseen_logged_in', 'true');
+            showAlert("جاري تحميل بياناتك من السحابة...");
+            await loadDataFromCloud();
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
-            showAlert("أهلاً بكِ في حصين، لمار!");
             initApp();
             checkHawlAlerts();
+            showAlert("أهلاً بكِ في حصين، لمار!");
         } else { showAlert("الرمز السري غير صحيح!", "error"); }
     }
     
@@ -683,20 +758,6 @@
         renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); renderVisionBoard();
         renderWishlist(); renderWallets(currentBank); calcStreak(); renderTimelineBadges();
         renderIdeas(); updateSprintUI(); calcTopChannel(); calcRunway();
-    }
-
-    function saveData() {
-        localStorage.setItem('haseen_wallets', JSON.stringify(wallets));
-        localStorage.setItem('haseen_incomes', JSON.stringify(incomes));
-        localStorage.setItem('haseen_expenses', JSON.stringify(expenses));
-        localStorage.setItem('haseen_subs', JSON.stringify(subscriptions));
-        localStorage.setItem('haseen_vision', JSON.stringify(visionGoals));
-        localStorage.setItem('haseen_wishlist', JSON.stringify(wishlist));
-        localStorage.setItem('haseen_ideas', JSON.stringify(ideas));
-        localStorage.setItem('haseen_tx_log', JSON.stringify(transactionsLog));
-        localStorage.setItem('haseen_last_out', lastOutDate);
-        localStorage.setItem('haseen_sprint_goal', sprintGoal);
-        renderDashboard(); renderVisionBoard(); renderWishlist(); renderExpenses(); renderSubscriptions(); renderChannelAnalytics(); calcStreak(); renderTimelineBadges(); renderIdeas(); updateSprintUI(); calcTopChannel(); calcRunway();
     }
 
     function renderDashboard() {
@@ -1078,7 +1139,7 @@
             targetW.balance += amt;
             transactionsLog.unshift({ date: new Date().toLocaleDateString('ar-SA'), walletName: targetW.name + ' (توفير رغبة 💡)', type: 'in', amount: amt, note: 'ضبط النفس وتجنب شراء غير ضروري' });
             saveData(); document.getElementById('wishShedAmount').value = '';
-            showAlert(`شطورة يا لمار! وفرتِ ${amt} ر.س وأضفتها للمحفظة 👏✨`);
+            showAlert(`شطورة يا لمار! وفرتِ ${amt} ر.س وأضفتها لمحفظة التوفير 👏✨`);
         }
     }
 
@@ -1333,33 +1394,6 @@
         if(confirm("هل تريدين حذف هذا الغرض من القائمة؟")) { wishlist = wishlist.filter(w => w.id !== id); saveData(); showAlert("تم الحذف من القائمة"); }
     }
 
-    function exportBackup() {
-        const allData = { wallets, incomes, expenses, subscriptions, visionGoals, wishlist, ideas, transactionsLog };
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData));
-        const a = document.createElement('a'); a.href = dataStr; a.download = `haseen_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
-    }
-
-    function importBackup(event) {
-        const file = event.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = JSON.parse(e.target.result);
-                if (data.wallets) wallets = data.wallets;
-                if (data.incomes) incomes = data.incomes;
-                if (data.expenses) expenses = data.expenses;
-                if (data.subscriptions) subscriptions = data.subscriptions;
-                if (data.visionGoals) visionGoals = data.visionGoals;
-                if (data.wishlist) wishlist = data.wishlist;
-                if (data.ideas) ideas = data.ideas;
-                if (data.transactionsLog) transactionsLog = data.transactionsLog;
-                saveData(); initApp();
-                showAlert("تم استرجاع بياناتك ومحافظك وسجلاتك بنجاح تامة! ✨");
-            } catch (err) { showAlert("ملف النسخة الاحتياطية غير صالح!", "error"); }
-        };
-        reader.readAsText(file);
-    }
-
     function renderVisionBoard() {
         const grid = document.getElementById('visionGrid'); grid.innerHTML = '';
         visionGoals.forEach(goal => {
@@ -1406,7 +1440,10 @@
     if(localStorage.getItem('haseen_logged_in') === 'true') {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('welcomeText').innerText = "أهلاً بكِ، لمار ✨";
-        initApp(); checkHawlAlerts();
+        loadDataFromCloud().then(() => {
+            initApp();
+            checkHawlAlerts();
+        });
     }
 </script>
 
